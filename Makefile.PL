@@ -12,6 +12,7 @@ WriteMakefile(
         'Moose'                     => '0',
         'MooseX::StrictConstructor' => '0',
         'Digest::MD5'               => '0',
+        'Digest::MD5::File'         => '0',
         'LWP'                       => '0',
     }
 );
