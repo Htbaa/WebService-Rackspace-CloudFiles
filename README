@@ -1,0 +1,64 @@
+NAME
+    Net::Mosso::CloudFiles - Interface to Mosso CloudFiles service
+
+SYNOPSIS
+      use Net::Mosso::CloudFiles;
+      use Perl6::Say;
+
+      my $cloudfiles = Net::Mosso::CloudFiles->new(
+          user => 'myusername',
+          key  => 'mysecretkey',
+      );
+
+      $cloudfiles->container('testing');
+
+      my @containers = $cloudfiles->containers;
+      foreach my $container (@containers) {
+          say 'have container ' . $container->name;
+      }
+
+      my $total_bytes_used = $cloudfiles->total_bytes_used;
+      say "used $total_bytes_used";
+
+      my $container = $cloudfiles->container('testing');
+
+      my $object_count = $container->object_count;
+      say "$object_count objects";
+
+      my $bytes_used = $container->bytes_used;
+      say "$bytes_used bytes";
+
+      my @objects = $container->objects;
+      foreach my $object (@objects) {
+          say 'have object ' . $object->name;
+      }
+
+      $container->put( 'XXX', 'YYY' );
+
+      my $object = $container->object('XXX');
+      say 'has size ' . $object->size;
+      say 'has md5 ' . $object->md5;
+      say 'has value ' . $object->value;
+
+      $object->delete;
+
+      $container->delete;
+
+DESCRIPTION
+    This module provides a simple interface to the Mosso CloudFiles service.
+    It is "Scalable, dynamic storage. Use as much or little as you want and
+    only pay for what you use".
+
+    This is the first version of this module. The API will probably change
+    and lots of documentation will be added.
+
+AUTHOR
+    Leon Brocard <acme@astray.com>.
+
+COPYRIGHT
+    Copyright (C) 2008, Leon Brocard
+
+LICENSE
+    This module is free software; you can redistribute it or modify it under
+    the same terms as Perl itself.
+
