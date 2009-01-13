@@ -2,7 +2,9 @@ Revision history for Perl module Net::Mosso::CloudFiles:
 
 0.33
     - Add getting and putting to files
-    - Do not use UTF8 key names
+    - Prohibit UTF8 key names
+    - Change the default content type from text/plain to 
+      application/octet-stream
 
 0.32 Wed Oct 22 23:01:11 BST 2008
 	- First release

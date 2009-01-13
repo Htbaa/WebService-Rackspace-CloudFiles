@@ -85,7 +85,7 @@ sub put {
         [   'X-Auth-Token'   => $self->cloudfiles->token,
             'Content-Length' => length($value),
             'ETag'           => $md5_hex,
-            'Content-Type'   => $content_type || 'text/plain',
+            'Content-Type'   => $content_type || 'application/octet-stream',
         ],
         $value
     );
@@ -111,7 +111,7 @@ sub put_filename {
         [   'X-Auth-Token'   => $self->cloudfiles->token,
             'Content-Length' => $size,
             'ETag'           => $md5_hex,
-            'Content-Type'   => $content_type || 'text/plain',
+            'Content-Type'   => $content_type || 'application/octet-stream',
         ],
         $self->_content_sub($filename),
     );
