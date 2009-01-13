@@ -3,7 +3,7 @@ use Moose;
 use MooseX::StrictConstructor;
 use Net::Mosso::CloudFiles::Container;
 use Net::Mosso::CloudFiles::Object;
-use LWP;
+use LWP::UserAgent::Determined;
 our $VERSION = '0.33';
 
 my $DEBUG = 0;
@@ -18,10 +18,13 @@ has 'token'       => ( is => 'rw', isa => 'Str',            required => 0 );
 
 sub BUILD {
     my $self = shift;
-    my $ua   = LWP::UserAgent->new(
-        keep_alive            => 10,
+    my $ua   = LWP::UserAgent::Determined->new(
+        keep_alive            => $KEEP_ALIVE_CACHESIZE,
         requests_redirectable => [qw(GET HEAD DELETE PUT)],
     );
+    $ua->timing('1,2,4,8,16,32');
+    my $http_codes_hr = $browser->codes_to_determinate();
+    $http_codes_hr->{422} = 1; # used by cloudfiles for upload data corruption
     $ua->timeout( $self->timeout );
     $ua->env_proxy;
     $self->ua($ua);
@@ -50,7 +53,7 @@ sub BUILD {
 sub request {
     my ( $self, $request, $filename ) = @_;
     warn $request->as_string if $DEBUG;
-    my $response = $self->ua->request($request, $filename);
+    my $response = $self->ua->request( $request, $filename );
     warn $response->as_string if $DEBUG;
     return $response;
 }
