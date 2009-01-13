@@ -11,11 +11,18 @@ has 'name' => ( is => 'ro', isa => 'Str', required => 1 );
 
 sub url {
     my ( $self, $name ) = @_;
+    my $url;
     if ($name) {
-        $self->cloudfiles->storage_url . '/' . $self->name . '/' . $name;
+        $url
+            = $self->cloudfiles->storage_url . '/'
+            . $self->name . '/'
+            . $name;
     } else {
-        $self->cloudfiles->storage_url . '/' . $self->name;
+        $url = $self->cloudfiles->storage_url . '/' . $self->name;
     }
+
+    utf8::downgrade($url);
+    return $url;
 }
 
 sub object_count {
