@@ -16,6 +16,8 @@ has 'ua'          => ( is => 'rw', isa => 'LWP::UserAgent', required => 0 );
 has 'storage_url' => ( is => 'rw', isa => 'Str',            required => 0 );
 has 'token'       => ( is => 'rw', isa => 'Str',            required => 0 );
 
+__PACKAGE__->meta->make_immutable;
+
 sub BUILD {
     my $self = shift;
     my $ua   = LWP::UserAgent::Determined->new(

@@ -9,6 +9,8 @@ has 'cloudfiles' =>
     ( is => 'ro', isa => 'Net::Mosso::CloudFiles', required => 1 );
 has 'name' => ( is => 'ro', isa => 'Str', required => 1 );
 
+__PACKAGE__->meta->make_immutable;
+
 sub url {
     my ( $self, $name ) = @_;
     my $url;
