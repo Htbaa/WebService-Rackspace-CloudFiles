@@ -4,7 +4,7 @@ use MooseX::StrictConstructor;
 use Net::Mosso::CloudFiles::Container;
 use Net::Mosso::CloudFiles::Object;
 use LWP::UserAgent::Determined;
-our $VERSION = '0.33';
+our $VERSION = '0.34';
 
 my $DEBUG = 0;
 

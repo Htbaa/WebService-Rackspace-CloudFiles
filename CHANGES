@@ -1,6 +1,6 @@
 Revision history for Perl module Net::Mosso::CloudFiles:
 
-0.34
+0.34 Tue Jan 13 15:37:27 GMT 2009
     - Retry upon errors using LWP::UserAgent::Determined
     - Make all the classes immutable
 
