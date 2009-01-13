@@ -21,11 +21,11 @@ __PACKAGE__->meta->make_immutable;
 sub BUILD {
     my $self = shift;
     my $ua   = LWP::UserAgent::Determined->new(
-        keep_alive            => $KEEP_ALIVE_CACHESIZE,
+        keep_alive            => 10,
         requests_redirectable => [qw(GET HEAD DELETE PUT)],
     );
     $ua->timing('1,2,4,8,16,32');
-    my $http_codes_hr = $browser->codes_to_determinate();
+    my $http_codes_hr = $ua->codes_to_determinate();
     $http_codes_hr->{422} = 1; # used by cloudfiles for upload data corruption
     $ua->timeout( $self->timeout );
     $ua->env_proxy;
