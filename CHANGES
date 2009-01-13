@@ -1,6 +1,6 @@
 Revision history for Perl module Net::Mosso::CloudFiles:
 
-0.33
+0.33 Tue Jan 13 09:04:11 GMT 2009
     - Add getting and putting to files
     - Prohibit UTF8 key names
     - Change the default content type from text/plain to 
