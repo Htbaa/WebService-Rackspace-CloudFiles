@@ -1,9 +1,11 @@
 package Net::Mosso::CloudFiles;
 use Moose;
 use MooseX::StrictConstructor;
+use Data::Stream::Bulk::Callback;
 use Net::Mosso::CloudFiles::Container;
 use Net::Mosso::CloudFiles::Object;
 use LWP::UserAgent::Determined;
+use URI::QueryParam;
 our $VERSION = '0.34';
 
 my $DEBUG = 0;
@@ -161,7 +163,8 @@ Net::Mosso::CloudFiles - Interface to Mosso CloudFiles service
   my $bytes_used = $container->bytes_used;
   say "$bytes_used bytes";
 
-  my @objects = $container->objects;
+  # returns a Data::Stream::Bulk object
+  my @objects = $container->objects->all;
   foreach my $object (@objects) {
       say 'have object ' . $object->name;
   }

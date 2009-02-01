@@ -28,7 +28,8 @@ SYNOPSIS
       my $bytes_used = $container->bytes_used;
       say "$bytes_used bytes";
 
-      my @objects = $container->objects;
+      # returns a Data::Stream::Bulk object
+      my @objects = $container->objects->all;
       foreach my $object (@objects) {
           say 'have object ' . $object->name;
       }
@@ -40,6 +41,10 @@ SYNOPSIS
       say 'has md5 ' . $object->md5;
       say 'has value ' . $object->value;
 
+      # get and put to files
+      $container->put_filename('README', 'README');
+      $container->object('README')->value_to_filename('README.new');
+
       $object->delete;
 
       $container->delete;
@@ -47,7 +52,8 @@ SYNOPSIS
 DESCRIPTION
     This module provides a simple interface to the Mosso CloudFiles service.
     It is "Scalable, dynamic storage. Use as much or little as you want and
-    only pay for what you use".
+    only pay for what you use". Find out more at
+    <http://cloud.rackspace.com/cloudfiles.jsp>.
 
     This is the first version of this module. The API will probably change
     and lots of documentation will be added.

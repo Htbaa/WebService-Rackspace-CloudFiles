@@ -9,12 +9,13 @@ WriteMakefile(
     AUTHOR       => 'Leon Brocard <acme@astray.com>',
     LICENSE      => 'perl',
     PREREQ_PM    => {
-        'Moose'                      => '0',
-        'MooseX::StrictConstructor'  => '0',
+        'Data::Stream::Bulk'         => '0',
         'Digest::MD5'                => '0',
         'Digest::MD5::File'          => '0',
         'LWP'                        => '0',
         'LWP::UserAgent::Determined' => '0',
+        'Moose'                      => '0',
+        'MooseX::StrictConstructor'  => '0',
     }
 );
 
