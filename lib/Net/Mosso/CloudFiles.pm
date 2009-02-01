@@ -4,6 +4,7 @@ use MooseX::StrictConstructor;
 use Data::Stream::Bulk::Callback;
 use Net::Mosso::CloudFiles::Container;
 use Net::Mosso::CloudFiles::Object;
+use LWP::ConnCache::MaxKeepAliveRequests;
 use LWP::UserAgent::Determined;
 use URI::QueryParam;
 our $VERSION = '0.34';
@@ -27,6 +28,12 @@ sub BUILD {
         requests_redirectable => [qw(GET HEAD DELETE PUT)],
     );
     $ua->timing('1,2,4,8,16,32');
+    $ua->conn_cache(
+        LWP::ConnCache::MaxKeepAliveRequests->new(
+            total_capacity          => 10,
+            max_keep_alive_requests => 990,
+        )
+    );
     my $http_codes_hr = $ua->codes_to_determinate();
     $http_codes_hr->{422} = 1; # used by cloudfiles for upload data corruption
     $ua->timeout( $self->timeout );
