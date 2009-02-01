@@ -175,6 +175,7 @@ Net::Mosso::CloudFiles - Interface to Mosso CloudFiles service
   foreach my $object (@objects) {
       say 'have object ' . $object->name;
   }
+  my @objects2 = $container->objects(prefix => 'dir/')->all;
 
   $container->put( 'XXX', 'YYY' );
 

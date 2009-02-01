@@ -55,17 +55,18 @@ sub delete {
 }
 
 sub objects {
-    my $self = shift;
+    my ( $self, %args ) = @_;
 
-    # limit, offset, prefix
     my $limit  = 10_000;
     my $offset = 0;
+    my $prefix = $args{prefix};
 
     return Data::Stream::Bulk::Callback->new(
         callback => sub {
-            my $url = URI->new($self->url);
+            my $url = URI->new( $self->url );
             $url->query_param( 'limit',  $limit );
             $url->query_param( 'offset', $offset );
+            $url->query_param( 'prefix', $prefix );
             my $request = HTTP::Request->new( 'GET', $url,
                 [ 'X-Auth-Token' => $self->cloudfiles->token ] );
             my $response = $self->cloudfiles->request($request);
@@ -73,6 +74,7 @@ sub objects {
             confess 'Unknown error' if $response->code != 200;
             return undef unless $response->content;
             my @objects;
+
             foreach my $name ( split "\n", $response->content ) {
                 push @objects,
                     Net::Mosso::CloudFiles::Object->new(
