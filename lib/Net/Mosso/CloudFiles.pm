@@ -80,7 +80,7 @@ sub request {
         # response on a given request (to either storage or cdn system)
         # and then re-authenticate to obtain an updated token.
         $self->_authenticate;
-        $request->header( 'X-Auth-Token', $self->cloudfiles->token );
+        $request->header( 'X-Auth-Token', $self->token );
         warn $request->as_string if $DEBUG;
         $response = $self->ua->request( $request, $filename );
         warn $response->as_string if $DEBUG;
