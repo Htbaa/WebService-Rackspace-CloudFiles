@@ -1,8 +1,8 @@
 Revision history for Perl module Net::Mosso::CloudFiles:
 
 0.35
-    - Retry upon 401 errors as CloudFiles very occasionally mistakenly
-      reports "Missing Authenticate header"
+    - Reauthenticate when the authentication token expires
+      (after one hour)
 
 0.34 Tue Jan 13 15:37:27 GMT 2009
     - Retry upon errors using LWP::UserAgent::Determined

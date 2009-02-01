@@ -31,6 +31,12 @@ sub BUILD {
     $ua->env_proxy;
     $self->ua($ua);
 
+    $self->_authenticate;
+}
+
+sub _authenticate {
+    my $self = shift;
+
     my $request = HTTP::Request->new(
         'GET',
         'https://api.mosso.com/auth',
@@ -57,6 +63,19 @@ sub request {
     warn $request->as_string if $DEBUG;
     my $response = $self->ua->request( $request, $filename );
     warn $response->as_string if $DEBUG;
+    if ( $response->code == 401 && $request->header('X-Auth-Token') ) {
+
+        # http://trac.cyberduck.ch/ticket/2876
+        # Be warned that the token will expire over time (possibly as short
+        # as an hour). The application should trap a 401 (Unauthorized)
+        # response on a given request (to either storage or cdn system)
+        # and then re-authenticate to obtain an updated token.
+        $self->_authenticate;
+        $request->header( 'X-Auth-Token', $self->cloudfiles->token );
+        warn $request->as_string if $DEBUG;
+        $response = $self->ua->request( $request, $filename );
+        warn $response->as_string if $DEBUG;
+    }
     return $response;
 }
 
