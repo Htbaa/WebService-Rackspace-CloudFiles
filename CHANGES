@@ -1,6 +1,6 @@
 Revision history for Perl module Net::Mosso::CloudFiles:
 
-0.35
+0.35 Mon Feb  2 06:10:06 GMT 2009
     - Reauthenticate when the authentication token expires
       (after one hour)
     - Return more than 10,000 objects by issuing multiple calls
