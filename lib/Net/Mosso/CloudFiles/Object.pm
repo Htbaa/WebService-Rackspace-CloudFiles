@@ -28,6 +28,15 @@ sub size {
     return $response->header('Content-Length');
 }
 
+sub last_modified {
+    my $self    = shift;
+    my $request = HTTP::Request->new( 'HEAD', $self->url,
+        [ 'X-Auth-Token' => $self->cloudfiles->token ] );
+    my $response = $self->cloudfiles->request($request);
+    confess 'Unknown error' if $response->code != 204;
+    return $response->header('Last-Modified');
+}
+
 sub md5 {
     my $self    = shift;
     my $request = HTTP::Request->new( 'HEAD', $self->url,
@@ -49,14 +58,14 @@ sub value {
 }
 
 sub value_to_filename {
-    my ($self, $filename) = @_;
+    my ( $self, $filename ) = @_;
     my $request = HTTP::Request->new( 'GET', $self->url,
         [ 'X-Auth-Token' => $self->cloudfiles->token ] );
-    my $response = $self->cloudfiles->request($request, $filename);
+    my $response = $self->cloudfiles->request( $request, $filename );
 
     confess 'Unknown error' if $response->code != 200;
     confess 'Data corruption error'
-        if $response->header('ETag') ne file_md5_hex( $filename );
+        if $response->header('ETag') ne file_md5_hex($filename);
     return $filename;
 }
 
