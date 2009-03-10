@@ -1,8 +1,7 @@
 Revision history for Perl module Net::Mosso::CloudFiles:
 
-0.36
-    - Add method to get the last modified date from an object
-      (patch by William Wolf)
+0.40
+    - Major rewrite to be more like Net::Amazon::S3
 
 0.35 Mon Feb  2 06:10:06 GMT 2009
     - Reauthenticate when the authentication token expires

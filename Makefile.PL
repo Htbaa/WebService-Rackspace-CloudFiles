@@ -10,13 +10,16 @@ WriteMakefile(
     LICENSE      => 'perl',
     PREREQ_PM    => {
         'Data::Stream::Bulk'                   => '0',
+        'DateTime::Format::HTTP'               => '0',
         'Digest::MD5'                          => '0',
         'Digest::MD5::File'                    => '0',
+        'File::Slurp'                          => '0',
         'LWP'                                  => '0',
         'LWP::ConnCache::MaxKeepAliveRequests' => '0',
         'LWP::UserAgent::Determined'           => '0',
         'Moose'                                => '0',
         'MooseX::StrictConstructor'            => '0',
+        'Test::Exception'                      => '0',
     }
 );
 

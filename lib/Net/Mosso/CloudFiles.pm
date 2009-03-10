@@ -2,6 +2,7 @@ package Net::Mosso::CloudFiles;
 use Moose;
 use MooseX::StrictConstructor;
 use Data::Stream::Bulk::Callback;
+use DateTime::Format::HTTP;
 use Net::Mosso::CloudFiles::Container;
 use Net::Mosso::CloudFiles::Object;
 use LWP::ConnCache::MaxKeepAliveRequests;
@@ -119,7 +120,21 @@ sub total_bytes_used {
 }
 
 sub container {
-    my ( $self, $name ) = @_;
+    my ( $self, %conf ) = @_;
+    my $name = $conf{name};
+    confess 'Missing name' unless $name;
+
+    return Net::Mosso::CloudFiles::Container->new(
+        cloudfiles => $self,
+        name       => $name,
+    );
+}
+
+sub create_container {
+    my ( $self, %conf ) = @_;
+    my $name = $conf{name};
+    confess 'Missing name' unless $name;
+
     my $request = HTTP::Request->new(
         'PUT',
         $self->storage_url . '/' . $name,
