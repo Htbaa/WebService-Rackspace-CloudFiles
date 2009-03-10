@@ -39,10 +39,7 @@ sub head {
     my $response = $self->cloudfiles->request($request);
     confess 'Object ' . $self->name . ' not found' if $response->code == 404;
     confess 'Unknown error' if $response->code != 204;
-    $self->etag( $response->header('ETag') );
-    $self->size( $response->header('Content-Length') );
-    $self->content_type( $response->header('Content-Type') );
-    $self->last_modified( $response->header('Last-Modified') );
+    $self->_set_attributes_from_response($response);
     return $response->content;
 }
 
@@ -55,10 +52,7 @@ sub get {
     confess 'Unknown error' if $response->code != 200;
     confess 'Data corruption error'
         if $response->header('ETag') ne md5_hex( $response->content );
-    $self->etag( $response->header('ETag') );
-    $self->size( $response->header('Content-Length') );
-    $self->content_type( $response->header('Content-Type') );
-    $self->last_modified( $response->header('Last-Modified') );
+    $self->_set_attributes_from_response($response);
     return $response->content;
 }
 
@@ -72,10 +66,7 @@ sub get_filename {
     confess 'Unknown error' if $response->code != 200;
     confess 'Data corruption error'
         if $response->header('ETag') ne file_md5_hex($filename);
-    $self->etag( $response->header('ETag') );
-    $self->size( $response->header('Content-Length') );
-    $self->content_type( $response->header('Content-Type') );
-    $self->last_modified( $response->header('Last-Modified') );
+    $self->_set_attributes_from_response($response);
     my $last_modified = $self->last_modified->epoch;
 
     # make sure the file has the same last modification time
@@ -184,6 +175,14 @@ sub _content_sub {
         $remaining -= length($buffer);
         return $buffer;
     };
+}
+
+sub _set_attributes_from_response {
+    my ( $self, $response ) = @_;
+    $self->etag( $response->header('ETag') );
+    $self->size( $response->header('Content-Length') );
+    $self->content_type( $response->header('Content-Type') );
+    $self->last_modified( $response->header('Last-Modified') );
 }
 
 1;
