@@ -90,7 +90,7 @@ sub put {
 
     my $request = HTTP::Request->new(
         'PUT',
-        $self->url($name),
+        $self->url,
         [   'X-Auth-Token'   => $self->cloudfiles->token,
             'Content-Length' => length($value),
             'ETag'           => $md5_hex,
@@ -117,7 +117,7 @@ sub put_filename {
 
     my $request = HTTP::Request->new(
         'PUT',
-        $self->url($name),
+        $self->url,
         [   'X-Auth-Token'   => $self->cloudfiles->token,
             'Content-Length' => $size,
             'ETag'           => $md5_hex,

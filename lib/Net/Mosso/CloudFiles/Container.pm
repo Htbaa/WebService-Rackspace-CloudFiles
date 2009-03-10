@@ -10,16 +10,7 @@ __PACKAGE__->meta->make_immutable;
 
 sub url {
     my ( $self, $name ) = @_;
-    my $url;
-    if ($name) {
-        $url
-            = $self->cloudfiles->storage_url . '/'
-            . $self->name . '/'
-            . $name;
-    } else {
-        $url = $self->cloudfiles->storage_url . '/' . $self->name;
-    }
-
+    my $url = $self->cloudfiles->storage_url . '/' . $self->name;
     utf8::downgrade($url);
     return $url;
 }
