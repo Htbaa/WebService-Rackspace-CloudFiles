@@ -167,17 +167,20 @@ Net::Mosso::CloudFiles - Interface to Mosso CloudFiles service
       key  => 'mysecretkey',
   );
 
-  $cloudfiles->container('testing');
-
+  # list all containers
   my @containers = $cloudfiles->containers;
   foreach my $container (@containers) {
       say 'have container ' . $container->name;
   }
 
+  # create a new container
+  my $container = $cloudfiles->create_container('testing');
+
+  # use an existing container
+  my $existing_container = $cloudfiles->container('testing');
+
   my $total_bytes_used = $cloudfiles->total_bytes_used;
   say "used $total_bytes_used";
-
-  my $container = $cloudfiles->container('testing');
 
   my $object_count = $container->object_count;
   say "$object_count objects";
@@ -186,22 +189,26 @@ Net::Mosso::CloudFiles - Interface to Mosso CloudFiles service
   say "$bytes_used bytes";
 
   # returns a Data::Stream::Bulk object
+  # as it may have to make multiple HTTP requests
   my @objects = $container->objects->all;
   foreach my $object (@objects) {
       say 'have object ' . $object->name;
   }
   my @objects2 = $container->objects(prefix => 'dir/')->all;
 
-  $container->put( 'XXX', 'YYY' );
+  my $xxx = $container->object( name => 'XXX' );
+  $xxx->put('this is the value');
 
-  my $object = $container->object('XXX');
+  my $value = $xxx->get;
   say 'has size ' . $object->size;
-  say 'has md5 ' . $object->md5;
+  say 'has md5 ' . $object->etag;
   say 'has value ' . $object->value;
+  say 'has last_modified ' . $object->last_modified;
 
-  # get and put to files
-  $container->put_filename('README', 'README');
-  $container->object('README')->value_to_filename('README.new');
+  my $yyy = $container->object( name => 'YYY', content_type => 'text/plain' );
+  $yyy->put_filename('README');
+
+  $yyy->get_filename('README.downloaded');
 
   $object->delete;
 
@@ -217,13 +224,34 @@ at L<http://cloud.rackspace.com/cloudfiles.jsp>.
 This is the first version of this module. The API will probably change
 and lots of documentation will be added.
 
+=head1 TESTING
+
+Testing CloudFiles is a tricky thing. Mosso charges you a bit of
+money each time you use their service. And yes, testing counts as using.
+Because of this, this modules's test suite skips testing unless
+you set the following three environment variables, along the lines of:
+
+  CLOUDFILES_EXPENSIVE_TESTS=1 CLOUDFILES_USER=username CLOUDFILES_KEY=15bf43... perl t/simple.t
+
+=over
+
+=item CLOUDFILES_EXPENSIVE_TESTS
+
+Set this to 1.
+
+=item CLOUDFILES_USER
+
+=item CLOUDFILES_KEY
+
+=back
+
 =head1 AUTHOR
 
 Leon Brocard <acme@astray.com>.
 
 =head1 COPYRIGHT
 
-Copyright (C) 2008, Leon Brocard
+Copyright (C) 2008-9, Leon Brocard
 
 =head1 LICENSE
 
