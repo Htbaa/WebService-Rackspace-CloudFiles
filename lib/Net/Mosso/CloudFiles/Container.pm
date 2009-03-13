@@ -1,6 +1,7 @@
 package Net::Mosso::CloudFiles::Container;
 use Moose;
 use MooseX::StrictConstructor;
+use JSON::XS::VersionOneAndTwo;
 
 has 'cloudfiles' =>
     ( is => 'ro', isa => 'Net::Mosso::CloudFiles', required => 1 );
@@ -45,16 +46,20 @@ sub delete {
 sub objects {
     my ( $self, %args ) = @_;
 
-    my $limit  = 10_000;
-    my $offset = 0;
-    my $prefix = $args{prefix};
+    my $limit = 10_000;
+    my $marker;
+    my $prefix   = $args{prefix};
+    my $finished = 0;
 
     return Data::Stream::Bulk::Callback->new(
         callback => sub {
+            return undef if $finished;
+
             my $url = URI->new( $self->url );
             $url->query_param( 'limit',  $limit );
-            $url->query_param( 'offset', $offset );
+            $url->query_param( 'marker', $marker );
             $url->query_param( 'prefix', $prefix );
+            $url->query_param( 'format', 'json' );
             my $request = HTTP::Request->new( 'GET', $url,
                 [ 'X-Auth-Token' => $self->cloudfiles->token ] );
             my $response = $self->cloudfiles->request($request);
@@ -63,15 +68,27 @@ sub objects {
             return undef unless $response->content;
             my @objects;
 
-            foreach my $name ( split "\n", $response->content ) {
+            my @bits = @{ from_json( $response->content ) };
+            return unless @bits;
+            foreach my $bit (@bits) {
                 push @objects,
                     Net::Mosso::CloudFiles::Object->new(
-                    cloudfiles => $self->cloudfiles,
-                    container  => $self,
-                    name       => $name,
+                    cloudfiles    => $self->cloudfiles,
+                    container     => $self,
+                    name          => $bit->{name},
+                    etag          => $bit->{hash},
+                    size          => $bit->{bytes},
+                    content_type  => $bit->{content_type},
+                    last_modified => $bit->{last_modified},
                     );
             }
-            $offset += scalar(@objects);
+
+            if ( @bits < $limit ) {
+                $finished = 1;
+            } else {
+                $marker = $objects[-1]->name;
+            }
+
             return \@objects;
         }
     );

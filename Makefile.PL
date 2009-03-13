@@ -14,6 +14,7 @@ WriteMakefile(
         'Digest::MD5'                          => '0',
         'Digest::MD5::File'                    => '0',
         'File::Slurp'                          => '0',
+        'JSON::XS::VersionOneAndTwo'           => '0',
         'LWP'                                  => '0',
         'LWP::ConnCache::MaxKeepAliveRequests' => '0',
         'LWP::UserAgent::Determined'           => '0',

@@ -193,6 +193,7 @@ Net::Mosso::CloudFiles - Interface to Mosso CloudFiles service
   my @objects = $container->objects->all;
   foreach my $object (@objects) {
       say 'have object ' . $object->name;
+      # also size, etag, content_type, last_modified
   }
   my @objects2 = $container->objects(prefix => 'dir/')->all;
 

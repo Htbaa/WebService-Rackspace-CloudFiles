@@ -12,7 +12,7 @@ use Net::Mosso::CloudFiles;
 unless ( $ENV{'CLOUDFILES_EXPENSIVE_TESTS'} ) {
     plan skip_all => 'Testing this module for real costs money.';
 } else {
-    plan tests => 38;
+    plan tests => 50;
 }
 
 my $cloudfiles = Net::Mosso::CloudFiles->new(
@@ -66,6 +66,17 @@ is( stat($filename)->mtime,
     'got last_modified for t/one.txt'
 );
 
+my @objects = $container->objects->all;
+is( @objects, 1, 'listing one object' );
+my $object = $objects[0];
+is( $object->name, 'one.txt', 'list has right name' );
+is( $object->etag, '855a8e4678542fd944455ee350fa8147',
+    'list has right etag' );
+is( $object->size, '11', 'list has right size' );
+is( $object->content_type, 'binary/octet-stream',
+    'list has right content type' );
+isa_ok( $object->last_modified, 'DateTime', 'list has a last modified' );
+
 $one->delete;
 throws_ok(
     sub { $one->get },
@@ -110,6 +121,16 @@ is( $and_another_two->content_type,
     'text/plain', 'got content_type for two.txt' );
 isa_ok( $and_another_two->last_modified,
     'DateTime', 'got last_modified for two.txt' );
+
+@objects = $container->objects->all;
+is( @objects, 1, 'listing one object' );
+$object = $objects[0];
+is( $object->name, 'two.txt', 'list has right name' );
+is( $object->etag, '855a8e4678542fd944455ee350fa8147',
+    'list has right etag' );
+is( $object->size,         '11',         'list has right size' );
+is( $object->content_type, 'text/plain', 'list has right content type' );
+isa_ok( $object->last_modified, 'DateTime', 'list has a last modified' );
 
 $another_two->delete;
 
