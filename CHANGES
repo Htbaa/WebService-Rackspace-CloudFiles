@@ -1,6 +1,6 @@
 Revision history for Perl module Net::Mosso::CloudFiles:
 
-0.41
+0.41 Tue Mar 17 14:52:50 GMT 2009
     - fix problem with uploading binary data
 
 0.40 Tue Mar 17 11:15:28 GMT 2009
