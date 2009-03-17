@@ -1,6 +1,6 @@
 Revision history for Perl module Net::Mosso::CloudFiles:
 
-0.40 Tue Mar 17 08:26:30 GMT 2009
+0.40 Tue Mar 17 11:15:28 GMT 2009
     - Major rewrite to be more like Net::Amazon::S3
     - Use new JSON request for listing objects - adding size, etag,
       content_type and last_modified
