@@ -6,8 +6,8 @@ use Digest::MD5 qw(md5_hex);
 use Digest::MD5::File qw(file_md5_hex);
 use File::stat;
 
-type 'DateTime' => where { $_->isa('DateTime') };
-coerce 'DateTime' => from 'Str' =>
+type 'Net::Mosso::CloudFiles::DateTime' => where { $_->isa('DateTime') };
+coerce 'Net::Mosso::CloudFiles::DateTime' => from 'Str' =>
     via { DateTime::Format::HTTP->parse_datetime($_) };
 
 type 'Etag' => where { $_ =~ /^[a-z0-9]{32}$/ };
@@ -21,7 +21,8 @@ has 'etag' => ( is => 'rw', isa => 'Etag' );
 has 'size' => ( is => 'rw', isa => 'Int' );
 has 'content_type' =>
     ( is => 'rw', isa => 'Str', default => 'binary/octet-stream' );
-has 'last_modified' => ( is => 'rw', isa => 'DateTime', coerce => 1 );
+has 'last_modified' =>
+    ( is => 'rw', isa => 'Net::Mosso::CloudFiles::DateTime', coerce => 1 );
 
 __PACKAGE__->meta->make_immutable;
 
