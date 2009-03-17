@@ -8,7 +8,7 @@ use Net::Mosso::CloudFiles::Object;
 use LWP::ConnCache::MaxKeepAliveRequests;
 use LWP::UserAgent::Determined;
 use URI::QueryParam;
-our $VERSION = '0.35';
+our $VERSION = '0.40';
 
 my $DEBUG = 0;
 
