@@ -28,9 +28,12 @@ __PACKAGE__->meta->make_immutable;
 
 sub url {
     my ($self) = @_;
-    $self->cloudfiles->storage_url . '/'
+    my $url
+        = $self->cloudfiles->storage_url . '/'
         . $self->container->name . '/'
         . $self->name;
+    utf8::downgrade($url);
+    return $url;
 }
 
 sub head {
