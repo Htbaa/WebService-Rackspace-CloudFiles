@@ -10,14 +10,14 @@ type 'Net::Mosso::CloudFiles::DateTime' => where { $_->isa('DateTime') };
 coerce 'Net::Mosso::CloudFiles::DateTime' => from 'Str' =>
     via { DateTime::Format::HTTP->parse_datetime($_) };
 
-type 'Etag' => where { $_ =~ /^[a-z0-9]{32}$/ };
+type 'Net::Mosso::CloudFiles::Etag' => where { $_ =~ /^[a-z0-9]{32}$/ };
 
 has 'cloudfiles' =>
     ( is => 'ro', isa => 'Net::Mosso::CloudFiles', required => 1 );
 has 'container' =>
     ( is => 'ro', isa => 'Net::Mosso::CloudFiles::Container', required => 1 );
 has 'name' => ( is => 'ro', isa => 'Str', required => 1 );
-has 'etag' => ( is => 'rw', isa => 'Etag' );
+has 'etag' => ( is => 'rw', isa => 'Net::Mosso::CloudFiles::Etag' );
 has 'size' => ( is => 'rw', isa => 'Int' );
 has 'content_type' =>
     ( is => 'rw', isa => 'Str', default => 'binary/octet-stream' );
