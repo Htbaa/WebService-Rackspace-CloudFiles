@@ -9,7 +9,7 @@ has 'name' => ( is => 'ro', isa => 'Str', required => 1 );
 
 __PACKAGE__->meta->make_immutable;
 
-sub url {
+sub _url {
     my ( $self, $name ) = @_;
     my $url = $self->cloudfiles->storage_url . '/' . $self->name;
     utf8::downgrade($url);
@@ -18,27 +18,27 @@ sub url {
 
 sub object_count {
     my $self    = shift;
-    my $request = HTTP::Request->new( 'HEAD', $self->url,
+    my $request = HTTP::Request->new( 'HEAD', $self->_url,
         [ 'X-Auth-Token' => $self->cloudfiles->token ] );
-    my $response = $self->cloudfiles->request($request);
+    my $response = $self->cloudfiles->_request($request);
     confess 'Unknown error' if $response->code != 204;
     return $response->header('X-Container-Object-Count');
 }
 
 sub bytes_used {
     my $self    = shift;
-    my $request = HTTP::Request->new( 'HEAD', $self->url,
+    my $request = HTTP::Request->new( 'HEAD', $self->_url,
         [ 'X-Auth-Token' => $self->cloudfiles->token ] );
-    my $response = $self->cloudfiles->request($request);
+    my $response = $self->cloudfiles->_request($request);
     confess 'Unknown error' if $response->code != 204;
     return $response->header('X-Container-Bytes-Used');
 }
 
 sub delete {
     my $self    = shift;
-    my $request = HTTP::Request->new( 'DELETE', $self->url,
+    my $request = HTTP::Request->new( 'DELETE', $self->_url,
         [ 'X-Auth-Token' => $self->cloudfiles->token ] );
-    my $response = $self->cloudfiles->request($request);
+    my $response = $self->cloudfiles->_request($request);
     confess 'Not empty' if $response->code == 409;
     confess 'Unknown error' if $response->code != 204;
 }
@@ -55,14 +55,14 @@ sub objects {
         callback => sub {
             return undef if $finished;
 
-            my $url = URI->new( $self->url );
+            my $url = URI->new( $self->_url );
             $url->query_param( 'limit',  $limit );
             $url->query_param( 'marker', $marker );
             $url->query_param( 'prefix', $prefix );
             $url->query_param( 'format', 'json' );
             my $request = HTTP::Request->new( 'GET', $url,
                 [ 'X-Auth-Token' => $self->cloudfiles->token ] );
-            my $response = $self->cloudfiles->request($request);
+            my $response = $self->cloudfiles->_request($request);
             return if $response->code == 204;
             confess 'Unknown error' if $response->code != 200;
             return undef unless $response->content;

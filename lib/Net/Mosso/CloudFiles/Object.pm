@@ -26,7 +26,7 @@ has 'last_modified' =>
 
 __PACKAGE__->meta->make_immutable;
 
-sub url {
+sub _url {
     my ($self) = @_;
     my $url
         = $self->cloudfiles->storage_url . '/'
@@ -38,9 +38,9 @@ sub url {
 
 sub head {
     my $self    = shift;
-    my $request = HTTP::Request->new( 'HEAD', $self->url,
+    my $request = HTTP::Request->new( 'HEAD', $self->_url,
         [ 'X-Auth-Token' => $self->cloudfiles->token ] );
-    my $response = $self->cloudfiles->request($request);
+    my $response = $self->cloudfiles->_request($request);
     confess 'Object ' . $self->name . ' not found' if $response->code == 404;
     confess 'Unknown error' if $response->code != 204;
     $self->_set_attributes_from_response($response);
@@ -49,9 +49,9 @@ sub head {
 
 sub get {
     my $self    = shift;
-    my $request = HTTP::Request->new( 'GET', $self->url,
+    my $request = HTTP::Request->new( 'GET', $self->_url,
         [ 'X-Auth-Token' => $self->cloudfiles->token ] );
-    my $response = $self->cloudfiles->request($request);
+    my $response = $self->cloudfiles->_request($request);
     confess 'Object ' . $self->name . ' not found' if $response->code == 404;
     confess 'Unknown error' if $response->code != 200;
     confess 'Data corruption error'
@@ -62,9 +62,9 @@ sub get {
 
 sub get_filename {
     my ( $self, $filename ) = @_;
-    my $request = HTTP::Request->new( 'GET', $self->url,
+    my $request = HTTP::Request->new( 'GET', $self->_url,
         [ 'X-Auth-Token' => $self->cloudfiles->token ] );
-    my $response = $self->cloudfiles->request( $request, $filename );
+    my $response = $self->cloudfiles->_request( $request, $filename );
 
     confess 'Object ' . $self->name . ' not found' if $response->code == 404;
     confess 'Unknown error' if $response->code != 200;
@@ -80,9 +80,9 @@ sub get_filename {
 
 sub delete {
     my $self    = shift;
-    my $request = HTTP::Request->new( 'DELETE', $self->url,
+    my $request = HTTP::Request->new( 'DELETE', $self->_url,
         [ 'X-Auth-Token' => $self->cloudfiles->token ] );
-    my $response = $self->cloudfiles->request($request);
+    my $response = $self->cloudfiles->_request($request);
     confess 'Object ' . $self->name . ' not found' if $response->code == 404;
     confess 'Unknown error' if $response->code != 204;
 }
@@ -94,7 +94,7 @@ sub put {
 
     my $request = HTTP::Request->new(
         'PUT',
-        $self->url,
+        $self->_url,
         [   'X-Auth-Token'   => $self->cloudfiles->token,
             'Content-Length' => length($value),
             'ETag'           => $md5_hex,
@@ -102,7 +102,7 @@ sub put {
         ],
         $value
     );
-    my $response = $self->cloudfiles->request($request);
+    my $response = $self->cloudfiles->_request($request);
     return if $response->code == 204;
     confess 'Missing Content-Length or Content-Type header'
         if $response->code == 412;
@@ -121,7 +121,7 @@ sub put_filename {
 
     my $request = HTTP::Request->new(
         'PUT',
-        $self->url,
+        $self->_url,
         [   'X-Auth-Token'   => $self->cloudfiles->token,
             'Content-Length' => $size,
             'ETag'           => $md5_hex,
@@ -129,7 +129,7 @@ sub put_filename {
         ],
         $self->_content_sub($filename),
     );
-    my $response = $self->cloudfiles->request($request);
+    my $response = $self->cloudfiles->_request($request);
     return if $response->code == 204;
     confess 'Missing Content-Length or Content-Type header'
         if $response->code == 412;

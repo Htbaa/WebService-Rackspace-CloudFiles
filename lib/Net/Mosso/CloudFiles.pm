@@ -54,7 +54,7 @@ sub _authenticate {
             'X-Auth-Key'  => $self->key,
         ]
     );
-    my $response = $self->request($request);
+    my $response = $self->_request($request);
 
     confess 'Unauthorized'  if $response->code == 401;
     confess 'Unknown error' if $response->code != 204;
@@ -68,7 +68,7 @@ sub _authenticate {
     $self->token($token);
 }
 
-sub request {
+sub _request {
     my ( $self, $request, $filename ) = @_;
     warn $request->as_string if $DEBUG;
     my $response = $self->ua->request( $request, $filename );
@@ -93,7 +93,7 @@ sub containers {
     my $self    = shift;
     my $request = HTTP::Request->new( 'GET', $self->storage_url,
         [ 'X-Auth-Token' => $self->token ] );
-    my $response = $self->request($request);
+    my $response = $self->_request($request);
     return if $response->code == 204;
     confess 'Unknown error' if $response->code != 200;
     my @containers;
@@ -112,7 +112,7 @@ sub total_bytes_used {
     my $self    = shift;
     my $request = HTTP::Request->new( 'HEAD', $self->storage_url,
         [ 'X-Auth-Token' => $self->token ] );
-    my $response = $self->request($request);
+    my $response = $self->_request($request);
     confess 'Unknown error' if $response->code != 204;
     my $total_bytes_used = $response->header('X-Account-Bytes-Used');
     $total_bytes_used = 0 if $total_bytes_used eq 'None';
@@ -140,7 +140,7 @@ sub create_container {
         $self->storage_url . '/' . $name,
         [ 'X-Auth-Token' => $self->token ]
     );
-    my $response = $self->request($request);
+    my $response = $self->_request($request);
     confess 'Unknown error'
         if $response->code != 201 && $response->code != 202;
     return Net::Mosso::CloudFiles::Container->new(
