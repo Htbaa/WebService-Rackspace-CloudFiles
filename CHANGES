@@ -3,6 +3,7 @@ Revision history for Perl module Net::Mosso::CloudFiles:
 0.42
     - add Crypt::SSLeay as a dependency as we use SSL for all
       requests
+    - update documentation
 
 0.41 Tue Mar 17 14:52:50 GMT 2009
     - fix problem with uploading binary data

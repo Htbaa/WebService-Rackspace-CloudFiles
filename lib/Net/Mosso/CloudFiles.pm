@@ -174,10 +174,10 @@ Net::Mosso::CloudFiles - Interface to Mosso CloudFiles service
   }
 
   # create a new container
-  my $container = $cloudfiles->create_container('testing');
+  my $container = $cloudfiles->create_container(name => 'testing');
 
   # use an existing container
-  my $existing_container = $cloudfiles->container('testing');
+  my $existing_container = $cloudfiles->container(name => 'testing');
 
   my $total_bytes_used = $cloudfiles->total_bytes_used;
   say "used $total_bytes_used";
@@ -197,18 +197,24 @@ Net::Mosso::CloudFiles - Interface to Mosso CloudFiles service
   }
   my @objects2 = $container->objects(prefix => 'dir/')->all;
 
+  # To create a new object
   my $xxx = $container->object( name => 'XXX' );
   $xxx->put('this is the value');
 
-  my $value = $xxx->get;
-  say 'has size ' . $object->size;
-  say 'has md5 ' . $object->etag;
-  say 'has value ' . $object->value;
-  say 'has last_modified ' . $object->last_modified;
-
+  # To create a new object with the contents of a local file
   my $yyy = $container->object( name => 'YYY', content_type => 'text/plain' );
   $yyy->put_filename('README');
 
+  # To fetch an object:
+  my $xxx2 = $container->object( name => 'XXX' );
+  my $value = $xxx2->get;
+  say 'has name ' . $xxx2->name;
+  say 'has md5 ' . $xxx2->etag;
+  say 'has size ' . $xxx2->size;
+  say 'has content type ' . $xxx2->content_type;
+  say 'has last_modified ' . $xxx2->last_modified;
+
+  # To download an object to a local file
   $yyy->get_filename('README.downloaded');
 
   $object->delete;
@@ -217,34 +223,68 @@ Net::Mosso::CloudFiles - Interface to Mosso CloudFiles service
 
 =head1 DESCRIPTION
 
-This module provides a simple interface to the Mosso CloudFiles service.
-It is "Scalable, dynamic storage. Use as much or little as you want and
-only pay for what you use". Find out more 
-at L<http://cloud.rackspace.com/cloudfiles.jsp>.
+This module provides a simple interface to the Mosso Cloud Files
+service. "Cloud Files is reliable, scalable and affordable web-based
+storage for backing up and archiving all your static content".
+Find out more at L<http://www.mosso.com/cloudfiles.jsp>.
 
-This is the first version of this module. The API will probably change
-and lots of documentation will be added.
+To use this module you will need to sign up to Mosso Cloud Files
+and provide a "user" and "key". If you use this module, you will
+incurr costs as specified by Mosso. Please check the costs. If
+you use this module with your user and key you will be responsible
+for these costs.
+
+I highly recommend reading all about Cloud Files, but in a nutshell
+data is stored in objects. Objects are referenced by names and objects
+are stored in containers.
+
+=head1 METHODS
+
+=head2 new
+
+The constructor logs you into Cloud Files:
+
+  my $cloudfiles = Net::Mosso::CloudFiles->new(
+      user => 'myusername',
+      key  => 'mysecretkey',
+  );
+
+=head2 containers
+
+List all the containers and return them as L<Net::Mosso::CloudFiles::Container> objects:
+
+  my @containers = $cloudfiles->containers;
+
+=head2 create_container
+
+Create a new container and return it as a L<Net::Mosso::CloudFiles::Container> object:
+
+  my $container = $cloudfiles->create_container(name => 'testing');
+
+=head2 container
+
+Use an existing container and return it as a L<Net::Mosso::CloudFiles::Container> object:
+
+  my $existing_container = $cloudfiles->container(name => 'testing');
+
+=head2 total_bytes_used
+
+Returns the total amount of bytes used in your Cloud Files account:
+
+  my $total_bytes_used = $cloudfiles->total_bytes_used;
 
 =head1 TESTING
 
 Testing CloudFiles is a tricky thing. Mosso charges you a bit of
 money each time you use their service. And yes, testing counts as using.
-Because of this, this modules's test suite skips testing unless
+Because of this, this module's test suite skips testing unless
 you set the following three environment variables, along the lines of:
 
   CLOUDFILES_EXPENSIVE_TESTS=1 CLOUDFILES_USER=username CLOUDFILES_KEY=15bf43... perl t/simple.t
 
-=over
+=head1 SEE ALSO
 
-=item CLOUDFILES_EXPENSIVE_TESTS
-
-Set this to 1.
-
-=item CLOUDFILES_USER
-
-=item CLOUDFILES_KEY
-
-=back
+L<Net::Mosso::CloudFiles::Container>, L<Net::Mosso::CloudFiles::Object>.
 
 =head1 AUTHOR
 
