@@ -9,6 +9,7 @@ WriteMakefile(
     AUTHOR       => 'Leon Brocard <acme@astray.com>',
     LICENSE      => 'perl',
     PREREQ_PM    => {
+        'Crypt::SSLeay'                        => '0',
         'Data::Stream::Bulk'                   => '0',
         'DateTime::Format::HTTP'               => '0',
         'Digest::MD5'                          => '0',
