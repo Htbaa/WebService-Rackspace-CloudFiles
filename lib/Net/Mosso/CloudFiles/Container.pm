@@ -119,6 +119,12 @@ calling new_container or container on a L<Net::Mosso::CloudFiles> object.
 
 =head1 METHODS
 
+=head2 name
+
+Returns the name of the container:
+
+  say 'have container ' . $container->name;
+
 =head2 object_count
 
 Returns the total number of objects in the container:
