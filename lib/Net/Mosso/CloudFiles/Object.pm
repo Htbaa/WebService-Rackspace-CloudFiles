@@ -6,8 +6,8 @@ use Digest::MD5 qw(md5_hex);
 use Digest::MD5::File qw(file_md5_hex);
 use File::stat;
 
-type 'Net::Mosso::CloudFiles::DateTime' => where { $_->isa('DateTime') };
-coerce 'Net::Mosso::CloudFiles::DateTime' => from 'Str' =>
+subtype 'Net::Mosso::CloudFiles::DateTime' => as class_type('DateTime');
+coerce 'Net::Mosso::CloudFiles::DateTime'  => from 'Str' =>
     via { DateTime::Format::HTTP->parse_datetime($_) };
 
 type 'Net::Mosso::CloudFiles::Etag' => where { $_ =~ /^[a-z0-9]{32}$/ };
