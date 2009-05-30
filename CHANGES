@@ -1,6 +1,6 @@
 Revision history for Perl module Net::Mosso::CloudFiles:
 
-0.43
+0.43 Sat May 30 17:45:34 BST 2009
     - work with latest Moose
 
 0.42 Fri Mar 27 15:49:48 GMT 2009
