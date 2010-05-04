@@ -12,7 +12,7 @@ use Net::Mosso::CloudFiles;
 unless ( $ENV{'CLOUDFILES_EXPENSIVE_TESTS'} ) {
     plan skip_all => 'Testing this module for real costs money.';
 } else {
-    plan tests => 50;
+    plan tests => 55;
 }
 
 my $cloudfiles = Net::Mosso::CloudFiles->new(
@@ -21,8 +21,7 @@ my $cloudfiles = Net::Mosso::CloudFiles->new(
 );
 isa_ok( $cloudfiles, 'Net::Mosso::CloudFiles' );
 
-ok( $cloudfiles->total_bytes_used, 'use some bytes' );
-ok( $cloudfiles->containers,       'have some containers' );
+
 
 my $container = $cloudfiles->create_container( name => 'testing' );
 isa_ok( $container, 'Net::Mosso::CloudFiles::Container', 'container' );
@@ -45,13 +44,30 @@ isa_ok( $one->container,  'Net::Mosso::CloudFiles::Container' );
 is( $one->container->name, 'testing', 'container name is testing' );
 is( $one->name,            'one.txt', 'object name is one.txt' );
 
+$one->object_metadata({ description => 'this is a description', useful_number => 17 });
+
 $one->put('this is one');
+
+## these will fail on an account that doesn't have anything in it yet
+## a case that is likely when just installing the module, so move them 
+## to be after we've created something.
+ok( $cloudfiles->total_bytes_used, 'use some bytes' );
+ok( $cloudfiles->containers,       'have some containers' );
+
+## now we wipe $one, and retrieve it.  This makes sure we aren't just
+## seeing the values we already put in locally.
+$one = undef;
+
+$one = $container->object( name => 'one.txt' );
+
 is( $one->get,  'this is one', 'got content for one.txt' );
 is( $one->size, 11,            'got size for one.txt' );
 is( $one->etag, '855a8e4678542fd944455ee350fa8147', 'got etag for one.txt' );
 is( $one->content_type, 'binary/octet-stream',
     'got content_type for one.txt' );
 isa_ok( $one->last_modified, 'DateTime', 'got last_modified for one.txt' );
+is( $one->object_metadata->{'useful_number'}, 17, 'numeric metadata works');
+is( $one->object_metadata->{'description'}, 'this is a description', 'string metadata works');
 
 my $filename = 't/one.txt';
 $one->get_filename($filename);
@@ -98,7 +114,7 @@ my $two
     = $container->object( name => 'two.txt', content_type => 'text/plain' );
 $two->put_filename('t/one.txt');
 
-my $another_two = $container->object( name => 'two.txt' );
+my $another_two = $container->object( name => 'two.txt', cache_value => 1);
 is( $another_two->get,  'this is one', 'got content for two.txt' );
 is( $another_two->size, 11,            'got size for two.txt' );
 is( $another_two->etag,
@@ -109,6 +125,19 @@ is( $another_two->content_type, 'text/plain',
     'got content_type for two.txt' );
 isa_ok( $another_two->last_modified, 'DateTime',
     'got last_modified for two.txt' );
+
+## change the value in CloudFiles, but don't let our $another_two object 
+## know about it.
+my $value_changer = $container->object( name => 'two.txt' );
+is ($value_changer->get, 'this is one', 're-retrieved content for two.txt');
+$value_changer->put("this is two");
+
+is( $another_two->get,  'this is one', 'got cached content for two.txt' );
+is( $another_two->get(1), 'this is two', 'forced retrieval of two.txt');  
+
+## set the value back to what it was originally.
+$value_changer->put("this is one");
+
 
 my $and_another_two = $container->object( name => 'two.txt' );
 $and_another_two->head;
