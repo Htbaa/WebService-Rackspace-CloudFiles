@@ -201,6 +201,12 @@ Net::Mosso::CloudFiles - Interface to Mosso CloudFiles service
   my $xxx = $container->object( name => 'XXX' );
   $xxx->put('this is the value');
 
+  # To set metadata of an object:
+  $xxx->object_metadata({
+	  description => 'this is a description',
+	  useful_number => 17
+  });
+  
   # To create a new object with the contents of a local file
   my $yyy = $container->object( name => 'YYY', content_type => 'text/plain' );
   $yyy->put_filename('README');
@@ -214,6 +220,10 @@ Net::Mosso::CloudFiles - Interface to Mosso CloudFiles service
   say 'has content type ' . $xxx2->content_type;
   say 'has last_modified ' . $xxx2->last_modified;
 
+  # To fetch metadata of an object:
+  say 'metadata description ' . $xxx2->object_metadata->{'description'};
+  say 'metadata useful_number ' . $xxx2->object_metadata->{'useful_number'};
+  
   # To download an object to a local file
   $yyy->get_filename('README.downloaded');
 
