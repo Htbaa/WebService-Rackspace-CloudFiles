@@ -3,6 +3,9 @@ Revision history for Perl module Net::Mosso::CloudFiles:
 0.44
     - Support for metadata - patch supplied by Jay Kuri, modified and applied by
 	  Christiaan Kras - closes RT#48561
+    
+    - All tests now pass since RT#58854 for DateTime::Format::HTTP has been
+      fixed.
 
 0.43 Sat May 30 17:45:34 BST 2009
     - work with latest Moose

@@ -11,7 +11,7 @@ WriteMakefile(
     PREREQ_PM    => {
         'Crypt::SSLeay'                        => '0',
         'Data::Stream::Bulk'                   => '0',
-        'DateTime::Format::HTTP'               => '0',
+        'DateTime::Format::HTTP'               => '0.39',
         'Digest::MD5'                          => '0',
         'Digest::MD5::File'                    => '0',
         'File::Slurp'                          => '0',
