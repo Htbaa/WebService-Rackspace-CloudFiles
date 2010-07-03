@@ -2,11 +2,9 @@ use inc::Module::Install;
 
 perl_version '5.008008';
 name 'WebService-Rackspace-CloudFiles';
-#abstract 'Interface to Rackspace CloudFiles service';
 all_from 'lib/WebService/Rackspace/CloudFiles.pm';
 
-#author 'Christiaan Kras <ckras@cpan.org>';
-#license 'perl';
+author 'Christiaan Kras <ckras@cpan.org>';
 
 resources bugtracker => 'http://github.com/Htbaa/WebService-Rackspace-CloudFiles/issues';
 resources repository => 'http://github.com/Htbaa/WebService-Rackspace-CloudFiles';
