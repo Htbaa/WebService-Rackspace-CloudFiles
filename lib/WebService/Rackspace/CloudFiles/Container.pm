@@ -1,10 +1,10 @@
-package Net::Mosso::CloudFiles::Container;
+package WebService::Rackspace::CloudFiles::Container;
 use Moose;
 use MooseX::StrictConstructor;
 use JSON::XS::VersionOneAndTwo;
 
 has 'cloudfiles' =>
-    ( is => 'ro', isa => 'Net::Mosso::CloudFiles', required => 1 );
+    ( is => 'ro', isa => 'WebService::Rackspace::CloudFiles', required => 1 );
 has 'name' => ( is => 'ro', isa => 'Str', required => 1 );
 
 __PACKAGE__->meta->make_immutable;
@@ -72,7 +72,7 @@ sub objects {
             return unless @bits;
             foreach my $bit (@bits) {
                 push @objects,
-                    Net::Mosso::CloudFiles::Object->new(
+                    WebService::Rackspace::CloudFiles::Object->new(
                     cloudfiles    => $self->cloudfiles,
                     container     => $self,
                     name          => $bit->{name},
@@ -97,7 +97,7 @@ sub objects {
 sub object {
     my ( $self, %conf ) = @_;
     confess 'Missing name' unless $conf{name};
-    return Net::Mosso::CloudFiles::Object->new(
+    return WebService::Rackspace::CloudFiles::Object->new(
         cloudfiles => $self->cloudfiles,
         container  => $self,
         %conf,
@@ -110,12 +110,12 @@ __END__
 
 =head1 NAME
 
-Net::Mosso::CloudFiles::Container - Represent a Cloud Files container
+WebService::Rackspace::CloudFiles::Container - Represent a Cloud Files container
 
 =head1 DESCRIPTION
 
 This class represents a container in Cloud Files. It is created by
-calling new_container or container on a L<Net::Mosso::CloudFiles> object.
+calling new_container or container on a L<WebService::Rackspace::CloudFiles> object.
 
 =head1 METHODS
 
@@ -140,7 +140,7 @@ Returns the total number of bytes used by objects in the container:
 =head2 objects
 
 Returns a list of objects in the container as
-L<Net::Mosso::CloudFiles::Object> objects. As the API only returns
+L<WebService::Rackspace::CloudFiles::Object> objects. As the API only returns
 ten thousand objects per request, this module may have to do multiple
 requests to fetch all the objects in the container. This is exposed
 by using a L<Data::Stream::Bulk> object. You can also pass in a
@@ -154,7 +154,7 @@ prefix:
 
 =head2 object
 
-This returns a <Net::Mosso::CloudFiles::Object> representing
+This returns a <WebService::Rackspace::CloudFiles::Object> representing
 an object.
 
   my $xxx = $container->object( name => 'XXX' );
@@ -168,7 +168,7 @@ Deletes the container, which should be empty:
 
 =head1 SEE ALSO
 
-L<Net::Mosso::CloudFiles>, L<Net::Mosso::CloudFiles::Object>.
+L<WebService::Rackspace::CloudFiles>, L<WebService::Rackspace::CloudFiles::Object>.
 
 =head1 AUTHOR
 

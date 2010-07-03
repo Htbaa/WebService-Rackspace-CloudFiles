@@ -7,7 +7,7 @@ use Test::Exception;
 use Digest::MD5::File qw(file_md5_hex);
 use File::stat;
 use File::Slurp;
-use Net::Mosso::CloudFiles;
+use WebService::Rackspace::CloudFiles;
 
 unless ( $ENV{'CLOUDFILES_EXPENSIVE_TESTS'} ) {
     plan skip_all => 'Testing this module for real costs money.';
@@ -15,22 +15,22 @@ unless ( $ENV{'CLOUDFILES_EXPENSIVE_TESTS'} ) {
     plan tests => 55;
 }
 
-my $cloudfiles = Net::Mosso::CloudFiles->new(
+my $cloudfiles = WebService::Rackspace::CloudFiles->new(
     user => $ENV{'CLOUDFILES_USER'},
     key  => $ENV{'CLOUDFILES_KEY'},
 );
-isa_ok( $cloudfiles, 'Net::Mosso::CloudFiles' );
+isa_ok( $cloudfiles, 'WebService::Rackspace::CloudFiles' );
 
 
 
 my $container = $cloudfiles->create_container( name => 'testing' );
-isa_ok( $container, 'Net::Mosso::CloudFiles::Container', 'container' );
-isa_ok( $container->cloudfiles, 'Net::Mosso::CloudFiles' );
+isa_ok( $container, 'WebService::Rackspace::CloudFiles::Container', 'container' );
+isa_ok( $container->cloudfiles, 'WebService::Rackspace::CloudFiles' );
 is( $container->name, 'testing', 'container name is testing' );
 
 my $container2 = $cloudfiles->container( name => 'testing' );
-isa_ok( $container2, 'Net::Mosso::CloudFiles::Container', 'container' );
-isa_ok( $container2->cloudfiles, 'Net::Mosso::CloudFiles' );
+isa_ok( $container2, 'WebService::Rackspace::CloudFiles::Container', 'container' );
+isa_ok( $container2->cloudfiles, 'WebService::Rackspace::CloudFiles' );
 is( $container2->name, 'testing', 'container name is testing' );
 
 is( $container->object_count, 0, 'container has no objects' );
@@ -38,9 +38,9 @@ is( $container->bytes_used,   0, 'container uses no bytes' );
 is( $container->objects->all, 0, 'container has no objects' );
 
 my $one = $container->object( name => 'one.txt' );
-isa_ok( $one, 'Net::Mosso::CloudFiles::Object', 'container' );
-isa_ok( $one->cloudfiles, 'Net::Mosso::CloudFiles' );
-isa_ok( $one->container,  'Net::Mosso::CloudFiles::Container' );
+isa_ok( $one, 'WebService::Rackspace::CloudFiles::Object', 'container' );
+isa_ok( $one->cloudfiles, 'WebService::Rackspace::CloudFiles' );
+isa_ok( $one->container,  'WebService::Rackspace::CloudFiles::Container' );
 is( $one->container->name, 'testing', 'container name is testing' );
 is( $one->name,            'one.txt', 'object name is one.txt' );
 

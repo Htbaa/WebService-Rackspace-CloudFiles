@@ -1,4 +1,4 @@
-package Net::Mosso::CloudFiles::Object;
+package WebService::Rackspace::CloudFiles::Object;
 use Moose;
 use MooseX::StrictConstructor;
 use Moose::Util::TypeConstraints;
@@ -6,23 +6,23 @@ use Digest::MD5 qw(md5_hex);
 use Digest::MD5::File qw(file_md5_hex);
 use File::stat;
 
-subtype 'Net::Mosso::CloudFiles::DateTime' => as class_type('DateTime');
-coerce 'Net::Mosso::CloudFiles::DateTime'  => from 'Str' =>
+subtype 'WebService::Rackspace::CloudFiles::DateTime' => as class_type('DateTime');
+coerce 'WebService::Rackspace::CloudFiles::DateTime'  => from 'Str' =>
     via { DateTime::Format::HTTP->parse_datetime($_) };
 
-type 'Net::Mosso::CloudFiles::Etag' => where { $_ =~ /^[a-z0-9]{32}$/ };
+type 'WebService::Rackspace::CloudFiles::Etag' => where { $_ =~ /^[a-z0-9]{32}$/ };
 
 has 'cloudfiles' =>
-    ( is => 'ro', isa => 'Net::Mosso::CloudFiles', required => 1 );
+    ( is => 'ro', isa => 'WebService::Rackspace::CloudFiles', required => 1 );
 has 'container' =>
-    ( is => 'ro', isa => 'Net::Mosso::CloudFiles::Container', required => 1 );
+    ( is => 'ro', isa => 'WebService::Rackspace::CloudFiles::Container', required => 1 );
 has 'name' => ( is => 'ro', isa => 'Str', required => 1 );
-has 'etag' => ( is => 'rw', isa => 'Net::Mosso::CloudFiles::Etag' );
+has 'etag' => ( is => 'rw', isa => 'WebService::Rackspace::CloudFiles::Etag' );
 has 'size' => ( is => 'rw', isa => 'Int' );
 has 'content_type' =>
     ( is => 'rw', isa => 'Str', default => 'binary/octet-stream' );
 has 'last_modified' =>
-    ( is => 'rw', isa => 'Net::Mosso::CloudFiles::DateTime', coerce => 1 );
+    ( is => 'rw', isa => 'WebService::Rackspace::CloudFiles::DateTime', coerce => 1 );
 
 has 'cache_value' => (
     is        => 'rw',
@@ -328,7 +328,7 @@ __END__
 
 =head1 NAME
 
-Net::Mosso::CloudFiles::Object - Represent a Cloud Files object
+WebService::Rackspace::CloudFiles::Object - Represent a Cloud Files object
 
 =head1 SYNOPSIS
 
@@ -355,7 +355,7 @@ Net::Mosso::CloudFiles::Object - Represent a Cloud Files object
 =head1 DESCRIPTION
 
 This class represents an object in Cloud Files. It is created by
-calling object or objects on a L<Net::Mosso::CloudFiles::Container> object.
+calling object or objects on a L<WebService::Rackspace::CloudFiles::Container> object.
 
 =head1 METHODS
 
@@ -473,7 +473,7 @@ underscores.
 
 =head1 SEE ALSO
 
-L<Net::Mosso::CloudFiles>, L<Net::Mosso::CloudFiles::Container>.
+L<WebService::Rackspace::CloudFiles>, L<WebService::Rackspace::CloudFiles::Container>.
 
 =head1 AUTHOR
 

@@ -1,4 +1,10 @@
-Revision history for Perl module Net::Mosso::CloudFiles:
+Revision history for Perl module WebService::Rackspace::CloudFiles:
+
+1.00 Sat Jun 03 10:49:00 GMT+2 2010
+    - Forked from Net::Mosso::CloudFiles. Mosso changed name to Rackspace over
+	  a year ago.
+	
+    - Moved from ExtUtils::MakeMaker to Module::Install
 
 0.44 Sat Jun 03 09:39:02 GMT+2 2010
     - Support for metadata - patch supplied by Jay Kuri, modified and applied by

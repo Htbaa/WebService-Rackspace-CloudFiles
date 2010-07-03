@@ -1,27 +1,32 @@
-#!perl
-use strict;
-use warnings;
-use ExtUtils::MakeMaker;
-WriteMakefile(
-    NAME         => 'Net::Mosso::CloudFiles',
-    VERSION_FROM => 'lib/Net/Mosso/CloudFiles.pm',
-    ABSTRACT     => 'Interface to Mosso CloudFiles service',
-    AUTHOR       => 'Christiaan Kras <ckras@cpan.org>',
-    LICENSE      => 'perl',
-    PREREQ_PM    => {
-        'Crypt::SSLeay'                        => '0',
-        'Data::Stream::Bulk'                   => '0',
-        'DateTime::Format::HTTP'               => '0.39',
-        'Digest::MD5'                          => '0',
-        'Digest::MD5::File'                    => '0',
-        'File::Slurp'                          => '0',
-        'JSON::XS::VersionOneAndTwo'           => '0',
-        'LWP'                                  => '0',
-        'LWP::ConnCache::MaxKeepAliveRequests' => '0',
-        'LWP::UserAgent::Determined'           => '0',
-        'Moose'                                => '0',
-        'MooseX::StrictConstructor'            => '0',
-        'Test::Exception'                      => '0',
-    }
-);
+use inc::Module::Install;
 
+perl_version '5.008008';
+name 'WebService-Rackspace-CloudFiles';
+#abstract 'Interface to Rackspace CloudFiles service';
+all_from 'lib/WebService/Rackspace/CloudFiles.pm';
+
+#author 'Christiaan Kras <ckras@cpan.org>';
+#license 'perl';
+
+resources bugtracker => 'http://github.com/Htbaa/WebService-Rackspace-CloudFiles/issues';
+resources repository => 'http://github.com/Htbaa/WebService-Rackspace-CloudFiles';
+
+requires 'Crypt::SSLeay' => '0';
+requires 'Data::Stream::Bulk' => '0';
+requires 'DateTime::Format::HTTP' => '0.39';
+requires 'Digest::MD5' => '0';
+requires 'Digest::MD5::File' => '0';
+requires 'File::Slurp' => '0';
+requires 'JSON::XS::VersionOneAndTwo' => '0';
+requires 'LWP' => '0';
+requires 'LWP::ConnCache::MaxKeepAliveRequests' => '0';
+requires 'LWP::UserAgent::Determined' => '0';
+requires 'Moose' => '0';
+requires 'MooseX::StrictConstructor' => '0';
+
+test_requires 'Test::Exception' => '0';
+test_requires 'Test::More';
+
+use_ptar;
+auto_install;
+WriteAll;

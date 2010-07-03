@@ -1,10 +1,10 @@
-package Net::Mosso::CloudFiles;
+package WebService::Rackspace::CloudFiles;
 use Moose;
 use MooseX::StrictConstructor;
 use Data::Stream::Bulk::Callback;
 use DateTime::Format::HTTP;
-use Net::Mosso::CloudFiles::Container;
-use Net::Mosso::CloudFiles::Object;
+use WebService::Rackspace::CloudFiles::Container;
+use WebService::Rackspace::CloudFiles::Object;
 use LWP::ConnCache::MaxKeepAliveRequests;
 use LWP::UserAgent::Determined;
 use URI::QueryParam;
@@ -100,7 +100,7 @@ sub containers {
 
     foreach my $name ( split "\n", $response->content ) {
         push @containers,
-            Net::Mosso::CloudFiles::Container->new(
+            WebService::Rackspace::CloudFiles::Container->new(
             cloudfiles => $self,
             name       => $name,
             );
@@ -124,7 +124,7 @@ sub container {
     my $name = $conf{name};
     confess 'Missing name' unless $name;
 
-    return Net::Mosso::CloudFiles::Container->new(
+    return WebService::Rackspace::CloudFiles::Container->new(
         cloudfiles => $self,
         name       => $name,
     );
@@ -143,7 +143,7 @@ sub create_container {
     my $response = $self->_request($request);
     confess 'Unknown error'
         if $response->code != 201 && $response->code != 202;
-    return Net::Mosso::CloudFiles::Container->new(
+    return WebService::Rackspace::CloudFiles::Container->new(
         cloudfiles => $self,
         name       => $name,
     );
@@ -155,14 +155,14 @@ __END__
 
 =head1 NAME
 
-Net::Mosso::CloudFiles - Interface to Mosso CloudFiles service
+WebService::Rackspace::CloudFiles - Interface to Rackspace CloudFiles service
 
 =head1 SYNOPSIS
 
-  use Net::Mosso::CloudFiles;
+  use WebService::Rackspace::CloudFiles;
   use Perl6::Say;
 
-  my $cloudfiles = Net::Mosso::CloudFiles->new(
+  my $cloudfiles = WebService::Rackspace::CloudFiles->new(
       user => 'myusername',
       key  => 'mysecretkey',
   );
@@ -233,14 +233,20 @@ Net::Mosso::CloudFiles - Interface to Mosso CloudFiles service
 
 =head1 DESCRIPTION
 
-This module provides a simple interface to the Mosso Cloud Files
+This module was forked from L<Net::Mosso::CloudFiles> which was written by Leon
+Brocard <acme@astray.com>. However, due to Mosso changing its name to Rackspace
+it felt right to fork the module to a new namespace. Upgrading from
+L<Net::Mosso::CloudFiles> 0.44 should only require you to rename all Net::Mosso
+entries to WebService::Rackspace.
+
+This module provides a simple interface to the Rackspace Cloud Files
 service. "Cloud Files is reliable, scalable and affordable web-based
 storage for backing up and archiving all your static content".
-Find out more at L<http://www.mosso.com/cloudfiles.jsp>.
+Find out more at L<http://www.rackspacecloud.com/cloud_hosting_products/files>.
 
-To use this module you will need to sign up to Mosso Cloud Files
+To use this module you will need to sign up to Rackspace Cloud Files
 and provide a "user" and "key". If you use this module, you will
-incurr costs as specified by Mosso. Please check the costs. If
+incurr costs as specified by Rackspace. Please check the costs. If
 you use this module with your user and key you will be responsible
 for these costs.
 
@@ -254,26 +260,26 @@ are stored in containers.
 
 The constructor logs you into Cloud Files:
 
-  my $cloudfiles = Net::Mosso::CloudFiles->new(
+  my $cloudfiles = WebService::Rackspace::CloudFiles->new(
       user => 'myusername',
       key  => 'mysecretkey',
   );
 
 =head2 containers
 
-List all the containers and return them as L<Net::Mosso::CloudFiles::Container> objects:
+List all the containers and return them as L<WebService::Rackspace::CloudFiles::Container> objects:
 
   my @containers = $cloudfiles->containers;
 
 =head2 create_container
 
-Create a new container and return it as a L<Net::Mosso::CloudFiles::Container> object:
+Create a new container and return it as a L<WebService::Rackspace::CloudFiles::Container> object:
 
   my $container = $cloudfiles->create_container(name => 'testing');
 
 =head2 container
 
-Use an existing container and return it as a L<Net::Mosso::CloudFiles::Container> object:
+Use an existing container and return it as a L<WebService::Rackspace::CloudFiles::Container> object:
 
   my $existing_container = $cloudfiles->container(name => 'testing');
 
@@ -285,7 +291,7 @@ Returns the total amount of bytes used in your Cloud Files account:
 
 =head1 TESTING
 
-Testing CloudFiles is a tricky thing. Mosso charges you a bit of
+Testing CloudFiles is a tricky thing. Rackspace charges you a bit of
 money each time you use their service. And yes, testing counts as using.
 Because of this, this module's test suite skips testing unless
 you set the following three environment variables, along the lines of:
@@ -294,14 +300,16 @@ you set the following three environment variables, along the lines of:
 
 =head1 SEE ALSO
 
-L<Net::Mosso::CloudFiles::Container>, L<Net::Mosso::CloudFiles::Object>.
+L<WebService::Rackspace::CloudFiles::Container>, L<WebService::Rackspace::CloudFiles::Object>.
 
 =head1 AUTHOR
 
-Leon Brocard <acme@astray.com>.
+Fork by Christiaan Kras <ckras@cpan.org>
+L<Net::Mosso::CloudFiles> by Leon Brocard <acme@astray.com>.
 
 =head1 COPYRIGHT
 
+Copyright (C) 2010, Christiaan Kras
 Copyright (C) 2008-9, Leon Brocard
 
 =head1 LICENSE
