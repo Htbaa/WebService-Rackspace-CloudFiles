@@ -6,7 +6,7 @@ WriteMakefile(
     NAME         => 'Net::Mosso::CloudFiles',
     VERSION_FROM => 'lib/Net/Mosso/CloudFiles.pm',
     ABSTRACT     => 'Interface to Mosso CloudFiles service',
-    AUTHOR       => 'Leon Brocard <acme@astray.com>',
+    AUTHOR       => 'Christiaan Kras <ckras@cpan.org>',
     LICENSE      => 'perl',
     PREREQ_PM    => {
         'Crypt::SSLeay'                        => '0',

@@ -1,6 +1,6 @@
 Revision history for Perl module Net::Mosso::CloudFiles:
 
-0.44
+0.44 Sat Jun 03 09:39:02 GMT+2 2010
     - Support for metadata - patch supplied by Jay Kuri, modified and applied by
 	  Christiaan Kras - closes RT#48561
     
