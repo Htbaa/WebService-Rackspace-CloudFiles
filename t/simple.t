@@ -121,7 +121,7 @@ is( $another_two->etag,
     '855a8e4678542fd944455ee350fa8147',
     'got etag for two.txt'
 );
-is( $another_two->content_type, 'text/plain',
+is( $another_two->content_type, 'text/plain; charset=UTF-8',
     'got content_type for two.txt' );
 isa_ok( $another_two->last_modified, 'DateTime',
     'got last_modified for two.txt' );
@@ -146,8 +146,9 @@ is( $and_another_two->etag,
     '855a8e4678542fd944455ee350fa8147',
     'got etag for two.txt'
 );
+# Strange but true, the returned header contains a double charset...
 is( $and_another_two->content_type,
-    'text/plain', 'got content_type for two.txt' );
+    'text/plain; charset=UTF-8; charset=UTF-8', 'got content_type for two.txt' );
 isa_ok( $and_another_two->last_modified,
     'DateTime', 'got last_modified for two.txt' );
 
@@ -158,7 +159,7 @@ is( $object->name, 'two.txt', 'list has right name' );
 is( $object->etag, '855a8e4678542fd944455ee350fa8147',
     'list has right etag' );
 is( $object->size,         '11',         'list has right size' );
-is( $object->content_type, 'text/plain', 'list has right content type' );
+is( $object->content_type, 'text/plain; charset=UTF-8', 'list has right content type' );
 isa_ok( $object->last_modified, 'DateTime', 'list has a last modified' );
 
 $another_two->delete;
