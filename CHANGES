@@ -1,8 +1,10 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
-1.01 Sat Oct 16 15:13:00 GMT+2 2010
+1.01 Sat Oct 16 15:55:00 GMT+2 2010
     - Added missing File::Stat dependency as it's a required module for testing
     - Fixed content-type tests
+    - HEAD requests will now succeed if the response code is a successful status
+      code of 2xx (gh-1)
 
 1.00 Sat Jun 03 10:49:00 GMT+2 2010
     - Forked from Net::Mosso::CloudFiles. Mosso changed name to Rackspace over

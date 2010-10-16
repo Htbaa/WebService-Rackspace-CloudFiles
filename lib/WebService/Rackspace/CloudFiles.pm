@@ -113,7 +113,7 @@ sub total_bytes_used {
     my $request = HTTP::Request->new( 'HEAD', $self->storage_url,
         [ 'X-Auth-Token' => $self->token ] );
     my $response = $self->_request($request);
-    confess 'Unknown error' if $response->code != 204;
+    confess 'Unknown error' unless $response->is_success;
     my $total_bytes_used = $response->header('X-Account-Bytes-Used');
     $total_bytes_used = 0 if $total_bytes_used eq 'None';
     return $total_bytes_used;

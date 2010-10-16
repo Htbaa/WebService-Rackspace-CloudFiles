@@ -30,7 +30,7 @@ sub bytes_used {
     my $request = HTTP::Request->new( 'HEAD', $self->_url,
         [ 'X-Auth-Token' => $self->cloudfiles->token ] );
     my $response = $self->cloudfiles->_request($request);
-    confess 'Unknown error' if $response->code != 204;
+    confess 'Unknown error' unless $response->is_success;
     return $response->header('X-Container-Bytes-Used');
 }
 

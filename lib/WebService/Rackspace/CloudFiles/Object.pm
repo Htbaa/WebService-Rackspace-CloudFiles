@@ -81,7 +81,7 @@ sub head {
         [ 'X-Auth-Token' => $self->cloudfiles->token ] );
     my $response = $self->cloudfiles->_request($request);
     confess 'Object ' . $self->name . ' not found' if $response->code == 404;
-    confess 'Unknown error' if $response->code != 204;
+    confess 'Unknown error' unless $response->is_success;
     $self->_set_attributes_from_response($response);
     return $response->content;
 }
@@ -187,7 +187,7 @@ sub put {
         if $response->code == 412;
     confess 'Data corruption error' if $response->code == 422;
     confess 'Data corruption error' if $response->header('ETag') ne $md5_hex;
-    confess 'Unknown error'         if $response->code != 201;
+    confess 'Unknown error'         unless $response->is_success;
 }
 
 sub put_filename {
@@ -218,7 +218,7 @@ sub put_filename {
         if $response->code == 412;
     confess 'Data corruption error' if $response->code == 422;
     confess 'Data corruption error' if $response->header('ETag') ne $md5_hex;
-    confess 'Unknown error'         if $response->code != 201;
+    confess 'Unknown error'         unless $response->is_success;
 }
 
 sub _prepare_headers {
