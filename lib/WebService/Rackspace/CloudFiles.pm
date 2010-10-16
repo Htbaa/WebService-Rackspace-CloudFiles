@@ -8,7 +8,7 @@ use WebService::Rackspace::CloudFiles::Object;
 use LWP::ConnCache::MaxKeepAliveRequests;
 use LWP::UserAgent::Determined;
 use URI::QueryParam;
-our $VERSION = '1.00';
+our $VERSION = '1.01';
 
 my $DEBUG = 0;
 
