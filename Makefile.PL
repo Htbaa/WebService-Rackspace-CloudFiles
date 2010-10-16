@@ -24,6 +24,7 @@ requires 'MooseX::StrictConstructor' => '0';
 
 test_requires 'Test::Exception' => '0';
 test_requires 'Test::More';
+test_requires 'File::Stat';
 
 use_ptar;
 auto_install;
