@@ -8,12 +8,17 @@ use WebService::Rackspace::CloudFiles::Object;
 use LWP::ConnCache::MaxKeepAliveRequests;
 use LWP::UserAgent::Determined;
 use URI::QueryParam;
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 my $DEBUG = 0;
+my %locations = (
+    uk  => 'https://lon.auth.api.rackspacecloud.com/v1.0',
+    usa => 'https://auth.api.rackspacecloud.com/v1.0',
+);
 
 has 'user'    => ( is => 'ro', isa => 'Str', required => 1 );
 has 'key'     => ( is => 'ro', isa => 'Str', required => 1 );
+has 'location'=> ( is => 'ro', isa => 'Str', required => 0, default => 'usa');
 has 'timeout' => ( is => 'ro', isa => 'Num', required => 0, default => 30 );
 
 has 'ua'          => ( is => 'rw', isa => 'LWP::UserAgent', required => 0 );
@@ -47,9 +52,14 @@ sub BUILD {
 sub _authenticate {
     my $self = shift;
 
+    if ( ! exists $locations{$self->{location}} ) {
+	confess "location $self->{location} unknown: valid locations are " .
+		join(', ', keys %locations);
+    }
+
     my $request = HTTP::Request->new(
         'GET',
-        'https://api.mosso.com/auth',
+        $locations{$self->{location}},
         [   'X-Auth-User' => $self->user,
             'X-Auth-Key'  => $self->key,
         ]
@@ -263,6 +273,14 @@ The constructor logs you into Cloud Files:
   my $cloudfiles = WebService::Rackspace::CloudFiles->new(
       user => 'myusername',
       key  => 'mysecretkey',
+  );
+
+A location for the Cloud Files can now be specified. Valid locations are currently I<usa> and I<uk>, the default location is I<usa>
+
+  my $cloudfiles = WebService::Rackspace::CloudFiles->new(
+      user => 'myusername',
+      key  => 'mysecretkey',
+      location  => 'uk',
   );
 
 =head2 containers

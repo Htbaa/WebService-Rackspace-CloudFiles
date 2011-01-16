@@ -1,5 +1,8 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
+1.02 Sun Jan 16 14:55:00 GMT+2 2010
+    - Authentication location can now be set to either usa or uk (Adam Lelean) 
+
 1.01 Sat Oct 16 15:55:00 GMT+2 2010
     - Added missing File::Stat dependency as it's a required module for testing
     - Fixed content-type tests

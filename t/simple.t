@@ -16,8 +16,9 @@ unless ( $ENV{'CLOUDFILES_EXPENSIVE_TESTS'} ) {
 }
 
 my $cloudfiles = WebService::Rackspace::CloudFiles->new(
-    user => $ENV{'CLOUDFILES_USER'},
-    key  => $ENV{'CLOUDFILES_KEY'},
+    user     => $ENV{'CLOUDFILES_USER'},
+    key      => $ENV{'CLOUDFILES_KEY'},
+    location => $ENV{'CLOUDFILES_LOCATION'},
 );
 isa_ok( $cloudfiles, 'WebService::Rackspace::CloudFiles' );
 
