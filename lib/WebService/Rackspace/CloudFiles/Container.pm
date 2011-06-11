@@ -1,7 +1,7 @@
 package WebService::Rackspace::CloudFiles::Container;
 use Moose;
 use MooseX::StrictConstructor;
-use JSON::XS::VersionOneAndTwo;
+use JSON::Any;
 
 has 'cloudfiles' =>
     ( is => 'ro', isa => 'WebService::Rackspace::CloudFiles', required => 1 );
@@ -68,7 +68,7 @@ sub objects {
             return undef unless $response->content;
             my @objects;
 
-            my @bits = @{ from_json( $response->content ) };
+            my @bits = @{ JSON::Any->objFromJson( $response->content ) };
             return unless @bits;
             foreach my $bit (@bits) {
                 push @objects,
