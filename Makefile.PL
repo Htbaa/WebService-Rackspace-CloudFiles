@@ -19,8 +19,8 @@ requires 'JSON::XS::VersionOneAndTwo' => '0';
 requires 'LWP' => '0';
 requires 'LWP::ConnCache::MaxKeepAliveRequests' => '0';
 requires 'LWP::UserAgent::Determined' => '0';
-requires 'Moose' => '0';
-requires 'MooseX::StrictConstructor' => '0';
+requires 'Moose' => '2.0007';
+requires 'MooseX::StrictConstructor' => '0.16';
 
 test_requires 'Test::Exception' => '0';
 test_requires 'Test::More';
