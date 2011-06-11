@@ -6,24 +6,34 @@ use JSON::Any;
 has 'cloudfiles' =>
     ( is => 'ro', isa => 'WebService::Rackspace::CloudFiles', required => 1 );
 has 'name' => (is => 'ro', isa => 'Str', required => 1);
-has 'cdn_enabled'   => (is => 'ro', isa => 'Str');
-has 'ttl'           => (is => 'ro', isa => 'Num');
-has 'log_retention' => (is => 'ro', isa => 'Str');
-has 'cdn_uri'       => (is => 'ro', isa => 'Str');
-has 'cdn_ssl_uri'   => (is => 'ro', isa => 'Str');
+has 'cdn_enabled'   => (is => 'rw', isa => 'Str');
+has 'ttl'           => (is => 'rw', isa => 'Num');
+has 'log_retention' => (is => 'rw', isa => 'Str');
+has 'cdn_uri'       => (is => 'rw', isa => 'Str');
+has 'cdn_ssl_uri'   => (is => 'rw', isa => 'Str');
 
 __PACKAGE__->meta->make_immutable;
 
 sub _url {
-    my ( $self, $name ) = @_;
-    my $url = $self->cloudfiles->storage_url . '/' . $self->name;
+    my ( $self, $url_type ) = @_;
+
+    $url_type ||= '';
+    my $storage_url = $url_type eq 'cdn' ? 'cdn_management_url' : 'storage_url';
+    my $url = $self->cloudfiles->$storage_url . '/' . $self->name;
     utf8::downgrade($url);
     return $url;
 }
 
-sub object_count {
-    my $self    = shift;
-    my $request = HTTP::Request->new( 'HEAD', $self->_url,
+sub cdn_init {
+    my ($self) = @_;
+    
+    my $response = $self->head('cdn');
+    $self->cdn_enabled( $response->header('X-CDN-Enabled') );
+    $self->ttl( $response->header('X-TTL') );
+    $self->log_retention( $response->header('X-Log-Retention') );
+    $self->cdn_uri( $response->header('X-CDN-URI') );
+    $self->cdn_ssl_uri( $response->header('X-CDN-SSL-URI') );
+}
 
 sub head {
     my ($self, $url) = shift;
@@ -154,6 +164,10 @@ HTTP CDN URL to container, only applies when the container is public.
 =head2 cdn_ssl_uri
 
 HTTPS CDN URL to container, only applies when the container is public.
+
+=head2 cdn_init
+
+Retrieve CDN settings if the container is public.
 
 =head2 head
 
