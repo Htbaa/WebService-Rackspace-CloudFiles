@@ -21,9 +21,10 @@ has 'key'     => ( is => 'ro', isa => 'Str', required => 1 );
 has 'location'=> ( is => 'ro', isa => 'Str', required => 0, default => 'usa');
 has 'timeout' => ( is => 'ro', isa => 'Num', required => 0, default => 30 );
 
-has 'ua'          => ( is => 'rw', isa => 'LWP::UserAgent', required => 0 );
-has 'storage_url' => ( is => 'rw', isa => 'Str',            required => 0 );
-has 'token'       => ( is => 'rw', isa => 'Str',            required => 0 );
+has 'ua'                 => ( is => 'rw', isa => 'LWP::UserAgent', required => 0 );
+has 'storage_url'        => ( is => 'rw', isa => 'Str',            required => 0 );
+has 'cdn_management_url' => ( is => 'rw', isa => 'Str',            required => 0 );
+has 'token'              => ( is => 'rw', isa => 'Str',            required => 0 );
 
 __PACKAGE__->meta->make_immutable;
 
@@ -74,8 +75,12 @@ sub _authenticate {
     my $token = $response->header('X-Auth-Token')
         || confess 'Missing auth token';
 
+    my $cdn_management_url = $response->header('X-CDN-Management-Url')
+        || confess 'Missing CDN management url';
+
     $self->storage_url($storage_url);
     $self->token($token);
+    $self->cdn_management_url($cdn_management_url);
 }
 
 sub _request {
