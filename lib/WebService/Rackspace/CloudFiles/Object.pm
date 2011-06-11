@@ -75,6 +75,22 @@ sub _url {
     return $url;
 }
 
+sub _cdn_url {
+    my($self,$ssl) = @_;
+    $ssl ||= 0;
+    return sprintf('%s/%s',
+        $ssl ? $self->container->cdn_ssl_uri : $self->container->cdn_uri,
+        $self->name);
+}
+
+sub cdn_url {
+    return shift->_cdn_url;
+}
+
+sub cdn_ssl_url {
+    return shift->_cdn_url(1);
+}
+
 sub head {
     my $self    = shift;
     my $request = HTTP::Request->new( 'HEAD', $self->_url,
@@ -470,6 +486,14 @@ transmitted to CloudFiles.  They are re-translated when they are retrieved.
 This is mentioned only because if you access your data through a different 
 language or interface, your metadata keys will contain dashes instead of 
 underscores.
+
+=head2 cdn_url
+
+Retrieve HTTP CDN url to object.
+
+=head2 cdn_ssl_url
+
+Retrieve HTTPS CDN url to object.
 
 =head1 SEE ALSO
 

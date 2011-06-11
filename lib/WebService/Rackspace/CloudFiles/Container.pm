@@ -5,7 +5,12 @@ use JSON::Any;
 
 has 'cloudfiles' =>
     ( is => 'ro', isa => 'WebService::Rackspace::CloudFiles', required => 1 );
-has 'name' => ( is => 'ro', isa => 'Str', required => 1 );
+has 'name' => (is => 'ro', isa => 'Str', required => 1);
+has 'cdn_enabled'   => (is => 'ro', isa => 'Str');
+has 'ttl'           => (is => 'ro', isa => 'Num');
+has 'log_retention' => (is => 'ro', isa => 'Str');
+has 'cdn_uri'       => (is => 'ro', isa => 'Str');
+has 'cdn_ssl_uri'   => (is => 'ro', isa => 'Str');
 
 __PACKAGE__->meta->make_immutable;
 
@@ -124,6 +129,24 @@ calling new_container or container on a L<WebService::Rackspace::CloudFiles> obj
 Returns the name of the container:
 
   say 'have container ' . $container->name;
+
+=head2 cdn_enabled
+
+Return true if the container is public.
+
+=head2 ttl
+
+The TTL (Time To Live) of the container and its objects.
+
+=head2 log_retention
+
+=head2 cdn_uri
+
+HTTP CDN URL to container, only applies when the container is public.
+
+=head2 cdn_ssl_uri
+
+HTTPS CDN URL to container, only applies when the container is public.
 
 =head2 object_count
 

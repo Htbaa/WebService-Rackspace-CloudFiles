@@ -136,13 +136,10 @@ sub total_bytes_used {
 
 sub container {
     my ( $self, %conf ) = @_;
-    my $name = $conf{name};
-    confess 'Missing name' unless $name;
+    confess 'Missing name' unless $conf{name};
+    $conf{cloudfiles} = $self;
 
-    return WebService::Rackspace::CloudFiles::Container->new(
-        cloudfiles => $self,
-        name       => $name,
-    );
+    return WebService::Rackspace::CloudFiles::Container->new(%conf);
 }
 
 sub create_container {
