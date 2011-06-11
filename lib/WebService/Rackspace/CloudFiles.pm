@@ -8,6 +8,7 @@ use WebService::Rackspace::CloudFiles::Object;
 use LWP::ConnCache::MaxKeepAliveRequests;
 use LWP::UserAgent::Determined;
 use URI::QueryParam;
+use JSON::Any;
 our $VERSION = '1.03';
 
 my $DEBUG = 0;
@@ -106,19 +107,15 @@ sub _request {
 
 sub containers {
     my $self    = shift;
-    my $request = HTTP::Request->new( 'GET', $self->storage_url,
+    my $request = HTTP::Request->new( 'GET', $self->cdn_management_url . '?format=json',
         [ 'X-Auth-Token' => $self->token ] );
     my $response = $self->_request($request);
     return if $response->code == 204;
     confess 'Unknown error' if $response->code != 200;
     my @containers;
 
-    foreach my $name ( split "\n", $response->content ) {
-        push @containers,
-            WebService::Rackspace::CloudFiles::Container->new(
-            cloudfiles => $self,
-            name       => $name,
-            );
+    foreach my $container_data ( @{JSON::Any->from_json($response->content)} ) {
+        push @containers, $self->container(%{$container_data});
     }
     return @containers;
 }
