@@ -24,18 +24,25 @@ sub _url {
 sub object_count {
     my $self    = shift;
     my $request = HTTP::Request->new( 'HEAD', $self->_url,
+
+sub head {
+    my ($self, $url) = shift;
+    my $request = HTTP::Request->new('HEAD', $self->_url,
         [ 'X-Auth-Token' => $self->cloudfiles->token ] );
     my $response = $self->cloudfiles->_request($request);
-    confess 'Unknown error' if $response->code != 204;
+    confess 'Unknown error' unless $response->is_success;
+    return $response;
+}
+
+sub object_count {
+    my $self     = shift;
+    my $response = $self->head;
     return $response->header('X-Container-Object-Count');
 }
 
 sub bytes_used {
     my $self    = shift;
-    my $request = HTTP::Request->new( 'HEAD', $self->_url,
-        [ 'X-Auth-Token' => $self->cloudfiles->token ] );
-    my $response = $self->cloudfiles->_request($request);
-    confess 'Unknown error' unless $response->is_success;
+    my $response = $self->head;
     return $response->header('X-Container-Bytes-Used');
 }
 
@@ -147,6 +154,10 @@ HTTP CDN URL to container, only applies when the container is public.
 =head2 cdn_ssl_uri
 
 HTTPS CDN URL to container, only applies when the container is public.
+
+=head2 head
+
+Perform a HEAD request.
 
 =head2 object_count
 
