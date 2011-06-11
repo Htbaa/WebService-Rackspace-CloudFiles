@@ -75,7 +75,6 @@ sub _authenticate {
         || confess 'Missing storage url';
     my $token = $response->header('X-Auth-Token')
         || confess 'Missing auth token';
-
     my $cdn_management_url = $response->header('X-CDN-Management-Url')
         || confess 'Missing CDN management url';
 
