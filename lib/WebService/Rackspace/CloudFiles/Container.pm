@@ -36,8 +36,8 @@ sub cdn_init {
 }
 
 sub head {
-    my ($self, $url) = shift;
-    my $request = HTTP::Request->new('HEAD', $self->_url,
+    my ($self, $url) = @_;
+    my $request = HTTP::Request->new('HEAD', $self->_url($url),
         [ 'X-Auth-Token' => $self->cloudfiles->token ] );
     my $response = $self->cloudfiles->_request($request);
     confess 'Unknown error' unless $response->is_success;
