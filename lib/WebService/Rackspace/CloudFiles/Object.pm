@@ -475,12 +475,14 @@ underscores.
 
 L<WebService::Rackspace::CloudFiles>, L<WebService::Rackspace::CloudFiles::Container>.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
+Christiaan Kras <ckras@cpan.org>.
 Leon Brocard <acme@astray.com>.
 
 =head1 COPYRIGHT
 
+Copyright (C) 2010-2011, Christiaan Kras
 Copyright (C) 2008-9, Leon Brocard
 
 =head1 LICENSE

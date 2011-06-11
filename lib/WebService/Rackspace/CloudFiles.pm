@@ -325,14 +325,14 @@ you set the following three environment variables, along the lines of:
 
 L<WebService::Rackspace::CloudFiles::Container>, L<WebService::Rackspace::CloudFiles::Object>.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Fork by Christiaan Kras <ckras@cpan.org>
+Christiaan Kras <ckras@cpan.org>.
 L<Net::Mosso::CloudFiles> by Leon Brocard <acme@astray.com>.
 
 =head1 COPYRIGHT
 
-Copyright (C) 2010, Christiaan Kras
+Copyright (C) 2010-2011, Christiaan Kras
 Copyright (C) 2008-9, Leon Brocard
 
 =head1 LICENSE
