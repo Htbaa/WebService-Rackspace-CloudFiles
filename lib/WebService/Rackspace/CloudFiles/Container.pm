@@ -25,7 +25,7 @@ sub _url {
 }
 
 sub cdn_init {
-    my ($self) = @_;
+    my $self = shift;
     
     my $response = $self->head('cdn');
     $self->cdn_enabled( $response->header('X-CDN-Enabled') );
