@@ -35,6 +35,37 @@ sub cdn_init {
     $self->cdn_ssl_uri( $response->header('X-CDN-SSL-URI') );
 }
 
+sub cdn_enable {
+    my ($self, $ttl, $log_retention) = @_;
+    $ttl ||= 259200;
+    $log_retention ||= 0;
+    my $request = HTTP::Request->new('PUT', $self->_url('cdn'),
+        [ 'X-Auth-Token'    => $self->cloudfiles->token,
+          'X-TTL'           => $ttl,
+          'X-Log-Retention' => $log_retention ? 'True' : 'False' ] );
+    my $response = $self->cloudfiles->_request($request);
+    confess 'Unknown error' unless $response->is_success;
+
+    $self->ttl( $ttl );
+    $self->log_retention( $log_retention );
+    $self->cdn_uri( $response->header('X-CDN-URI') );
+    $self->cdn_ssl_uri( $response->header('X-CDN-SSL-URI') );
+}
+
+sub cdn_disable {
+    my $self = shift;
+    my $request = HTTP::Request->new('POST', $self->_url('cdn'),
+        [ 'X-Auth-Token'  => $self->cloudfiles->token,
+          'X-CDN-Enabled' => 'False' ] );
+    my $response = $self->cloudfiles->_request($request);
+    confess 'Unknown error' unless $response->is_success;
+
+    $self->ttl( 0 );
+    $self->log_retention( 0 );
+    $self->cdn_uri( $response->header('X-CDN-URI') );
+    $self->cdn_ssl_uri( $response->header('X-CDN-SSL-URI') );
+}
+
 sub head {
     my ($self, $url) = @_;
     my $request = HTTP::Request->new('HEAD', $self->_url($url),
@@ -168,6 +199,16 @@ HTTPS CDN URL to container, only applies when the container is public.
 =head2 cdn_init
 
 Retrieve CDN settings if the container is public.
+
+=head2 cdn_enable($ttl, $log_retention)
+
+Enable CDN to make contents of container public. I<$ttl> Defaults to 72-hours
+and I<$log_retention> defaults to false.
+
+=head2 cdn_disable
+
+Disable the CDN enabled container. Doesn't purge objects from CDN which means
+that they'll be available until their TTL expires.
 
 =head2 head
 
