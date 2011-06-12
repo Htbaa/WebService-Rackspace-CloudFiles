@@ -4,7 +4,8 @@ Revision history for Perl module WebService::Rackspace::CloudFiles:
     - Added basic support for enabling and disabling CDN on containers and
       added cdn_url and cdn_ssl_url methods to Object to retrieve their public
       url's
-    - Now using JSON::Any instead of JSON::XS::VersionOneAndTwo.
+    - Upped required version of Moose to 2.0007
+    - Now using JSON::Any instead of JSON::XS::VersionOneAndTwo
 
 1.02 Sun Jan 16 14:55:00 GMT+2 2010
     - Authentication location can now be set to either usa or uk (Adam Lelean) 
