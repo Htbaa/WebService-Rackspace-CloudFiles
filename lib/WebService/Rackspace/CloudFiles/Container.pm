@@ -90,7 +90,7 @@ sub objects {
             return undef unless $response->content;
             my @objects;
 
-            my @bits = @{ JSON::Any->objFromJson( $response->content ) };
+            my @bits = @{ JSON::Any->jsonToObj( $response->content ) };
             return unless @bits;
             foreach my $bit (@bits) {
                 push @objects,
