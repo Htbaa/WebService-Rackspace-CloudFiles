@@ -7,6 +7,7 @@ use Test::Exception;
 use Digest::MD5::File qw(file_md5_hex);
 use File::stat;
 use File::Slurp;
+use LWP::UserAgent;
 use WebService::Rackspace::CloudFiles;
 
 unless ( $ENV{'CLOUDFILES_EXPENSIVE_TESTS'} ) {
@@ -96,6 +97,10 @@ ok($container->cdn_uri, 'CDN HTTP URL');
 ok($container->cdn_ssl_uri, 'CDN HTTPS URL');
 ok($one->cdn_url, 'CDN HTTP URL for object');
 ok($one->cdn_ssl_url, 'CDN HTTPS URL for object');
+
+my $ua = LWP::UserAgent->new;
+my $res = $ua->head($one->cdn_url);
+ok($res->is_success, 'Requesting CDN HTTP URL');
 
 $one->delete;
 throws_ok(
