@@ -106,7 +106,7 @@ sub _request {
 
 sub containers {
     my $self    = shift;
-    my $request = HTTP::Request->new( 'GET', $self->cdn_management_url . '?format=json',
+    my $request = HTTP::Request->new( 'GET', $self->storage_url . '?format=json',
         [ 'X-Auth-Token' => $self->token ] );
     my $response = $self->_request($request);
     return if $response->code == 204;
@@ -134,6 +134,11 @@ sub container {
     my ( $self, %conf ) = @_;
     confess 'Missing name' unless $conf{name};
     $conf{cloudfiles} = $self;
+    for (keys %conf){
+        if (ref $conf{$_} eq 'JSON::XS::Boolean'){
+            $conf{$_} = ($conf{$_} ? 'true' : 'false');
+        }
+    }
 
     return WebService::Rackspace::CloudFiles::Container->new(%conf);
 }
