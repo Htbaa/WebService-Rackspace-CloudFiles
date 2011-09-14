@@ -11,6 +11,9 @@ has 'ttl'           => (is => 'rw', isa => 'Num');
 has 'log_retention' => (is => 'rw', isa => 'Str');
 has 'cdn_uri'       => (is => 'rw', isa => 'Str');
 has 'cdn_ssl_uri'   => (is => 'rw', isa => 'Str');
+has 'cdn_streaming_uri'   => (is => 'rw', isa => 'Str');
+has 'bytes'         => (is => 'rw', isa => 'Num');
+has 'count'         => (is => 'rw', isa => 'Num');
 
 __PACKAGE__->meta->make_immutable;
 
@@ -33,6 +36,7 @@ sub cdn_init {
     $self->log_retention( $response->header('X-Log-Retention') );
     $self->cdn_uri( $response->header('X-CDN-URI') );
     $self->cdn_ssl_uri( $response->header('X-CDN-SSL-URI') );
+    $self->cdn_streaming_uri( $response->header('X-CDN-STREAMING-URI') );
 }
 
 sub cdn_enable {
@@ -93,6 +97,14 @@ sub delete {
         [ 'X-Auth-Token' => $self->cloudfiles->token ] );
     my $response = $self->cloudfiles->_request($request);
     confess 'Not empty' if $response->code == 409;
+    confess 'Unknown error' if $response->code != 204;
+}
+
+sub purgecdn {
+    my $self    = shift;
+    my $request = HTTP::Request->new( 'DELETE', $self->_url('cdn'),
+        [ 'X-Auth-Token' => $self->cloudfiles->token ] );
+    my $response = $self->cloudfiles->_request($request);
     confess 'Unknown error' if $response->code != 204;
 }
 
