@@ -100,11 +100,14 @@ sub delete {
     confess 'Unknown error' if $response->code != 204;
 }
 
-sub purgecdn {
-    my $self    = shift;
+sub purge_cdn {
+    my ($self, @emails) = @_;
     my $request = HTTP::Request->new( 'DELETE', $self->_url('cdn'),
-        [ 'X-Auth-Token' => $self->cloudfiles->token ] );
+        [ 'X-Auth-Token' => $self->cloudfiles->token,
+          'X-Purge-Email' => join ', ', @emails] );
     my $response = $self->cloudfiles->_request($request);
+    confess 'Not Found' if $response->code == 404;
+    confess 'Unauthorized request' if $response->code == 403;
     confess 'Unknown error' if $response->code != 204;
 }
 
@@ -266,6 +269,18 @@ an object.
 Deletes the container, which should be empty:
 
   $container->delete;
+
+=head2 purge_cdn
+
+Purges a CDN enabled container without having to wait for the TTL to expire. 
+
+  $container->purge_cdn;
+
+Purging a CDN enabled container may take a very long time. So you can optionally
+provide one or more emails to be notified after the container is fully purged. 
+
+  my @emails = ('foo@example.com', 'bar@example.com');
+  $container->purge_cdn(@emails);
 
 =head1 SEE ALSO
 
