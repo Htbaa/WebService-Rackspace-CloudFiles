@@ -102,6 +102,8 @@ my $ua = LWP::UserAgent->new;
 my $res = $ua->head($one->cdn_url);
 ok($res->is_success, 'Requesting CDN HTTP URL');
 
+ok($one->purge_cdn, 'Purging CDN Object');
+
 $one->delete;
 throws_ok(
     sub { $one->get },
@@ -173,6 +175,7 @@ isa_ok( $object->last_modified, 'DateTime', 'list has a last modified' );
 
 $another_two->delete;
 
+ok($container->purge_cdn, 'Purging CDN Container');
 $container->delete;
 
 done_testing();
