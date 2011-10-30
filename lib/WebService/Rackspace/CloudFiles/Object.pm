@@ -175,6 +175,17 @@ sub delete {
     confess 'Unknown error' if $response->code != 204;
 }
 
+sub purge_cdn {
+    my ($self, @emails) = @_;
+    my $request = HTTP::Request->new( 'DELETE', $self->_url('cdn'),
+        [ 'X-Auth-Token' => $self->cloudfiles->token,
+          'X-Purge-Email' => join ', ', @emails] );
+    my $response = $self->cloudfiles->_request($request);
+    confess 'Not Found' if $response->code == 404;
+    confess 'Unauthorized request' if $response->code == 403;
+    confess 'Unknown error' if $response->code != 204;
+}
+
 sub put {
     my ( $self, $value ) = @_;
     my $name    = $self->name;
@@ -434,6 +445,20 @@ re-fetch of the file, pass a true value as the second arg to get_filename():
 Deletes an object:
 
   $object->delete;
+
+=head2 purge_cdn
+
+Purges an object in a CDN enabled container without having to wait for the TTL
+to expire. 
+
+  $object->purge_cdn;
+
+Purging an object in a CDN enabled container may take long time. So you can
+optionally provide one or more emails to be notified after the object is
+fully purged. 
+
+  my @emails = ('foo@example.com', 'bar@example.com');
+  $object->purge_cdn(@emails);
 
 =head2 put
 
