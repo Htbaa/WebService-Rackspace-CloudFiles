@@ -21,6 +21,7 @@ requires 'LWP::ConnCache::MaxKeepAliveRequests' => '0';
 requires 'LWP::UserAgent::Determined' => '0';
 requires 'Moose' => '2.0007';
 requires 'MooseX::StrictConstructor' => '0.16';
+requires 'URI::QueryParam' => '1.59';
 
 test_requires 'Test::Exception' => '0';
 test_requires 'Test::More';
