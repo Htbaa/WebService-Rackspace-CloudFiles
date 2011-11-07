@@ -6,7 +6,7 @@ use JSON::Any;
 has 'cloudfiles' =>
     ( is => 'ro', isa => 'WebService::Rackspace::CloudFiles', required => 1 );
 has 'name' => (is => 'ro', isa => 'Str', required => 1);
-has 'cdn_enabled'   => (is => 'rw', isa => 'Str');
+has 'cdn_enabled'   => (is => 'rw', isa => 'Bool');
 has 'ttl'           => (is => 'rw', isa => 'Num');
 has 'log_retention' => (is => 'rw', isa => 'Str');
 has 'cdn_uri'       => (is => 'rw', isa => 'Str');
@@ -31,7 +31,8 @@ sub cdn_init {
     my $self = shift;
     
     my $response = $self->head('cdn');
-    $self->cdn_enabled( $response->header('X-CDN-Enabled') );
+    my $cdn_enabled = $response->header('X-CDN-Enabled');
+    $self->cdn_enabled(ref $cdn_enabled eq ref JSON::Any->true ? 1 : 0 );
     $self->ttl( $response->header('X-TTL') );
     $self->log_retention( $response->header('X-Log-Retention') );
     $self->cdn_uri( $response->header('X-CDN-URI') );
