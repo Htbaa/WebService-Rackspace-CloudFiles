@@ -177,7 +177,7 @@ sub delete {
 
 sub purge_cdn {
     my ($self, @emails) = @_;
-    my $request = HTTP::Request->new( 'DELETE', $self->_url('cdn'),
+    my $request = HTTP::Request->new( 'DELETE', $self->_url,
         [ 'X-Auth-Token' => $self->cloudfiles->token,
           'X-Purge-Email' => join ', ', @emails] );
     my $response = $self->cloudfiles->_request($request);
