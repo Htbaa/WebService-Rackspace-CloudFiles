@@ -102,7 +102,8 @@ my $ua = LWP::UserAgent->new;
 my $res = $ua->head($one->cdn_url);
 ok($res->is_success, 'Requesting CDN HTTP URL');
 
-ok($one->purge_cdn, 'Purging CDN Object');
+#not purging in these tests because the $one->delete call will fail
+#ok($one->purge_cdn, 'Purging CDN Object');
 
 $one->delete;
 throws_ok(
@@ -132,7 +133,7 @@ is( $another_two->etag,
     '855a8e4678542fd944455ee350fa8147',
     'got etag for two.txt'
 );
-is( $another_two->content_type, 'text/plain; charset=UTF-8',
+is( $another_two->content_type, 'text/plain',
     'got content_type for two.txt' );
 isa_ok( $another_two->last_modified, 'DateTime',
     'got last_modified for two.txt' );
@@ -157,9 +158,9 @@ is( $and_another_two->etag,
     '855a8e4678542fd944455ee350fa8147',
     'got etag for two.txt'
 );
-# Strange but true, the returned header contains a double charset...
+
 is( $and_another_two->content_type,
-    'text/plain; charset=UTF-8; charset=UTF-8', 'got content_type for two.txt' );
+    'text/plain', 'got content_type for two.txt' );
 isa_ok( $and_another_two->last_modified,
     'DateTime', 'got last_modified for two.txt' );
 
@@ -170,12 +171,13 @@ is( $object->name, 'two.txt', 'list has right name' );
 is( $object->etag, '855a8e4678542fd944455ee350fa8147',
     'list has right etag' );
 is( $object->size,         '11',         'list has right size' );
-is( $object->content_type, 'text/plain; charset=UTF-8', 'list has right content type' );
+is( $object->content_type, 'text/plain', 'list has right content type' );
 isa_ok( $object->last_modified, 'DateTime', 'list has a last modified' );
 
 $another_two->delete;
 
-ok($container->purge_cdn, 'Purging CDN Container');
+#not purging in these tests because the $container->delete call would fail
+#ok($container->purge_cdn, 'Purging CDN Container');
 $container->delete;
 
 done_testing();

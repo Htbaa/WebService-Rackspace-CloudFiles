@@ -1,6 +1,7 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
 1.03 Sun Jun 00 00:00:00 GMT+2 2011
+    - Fixed several tests
     - Added missing prerequisite URI::QueryParam (gh-4)
     - Added basic support for enabling and disabling CDN on containers and
       added cdn_url and cdn_ssl_url methods to Object to retrieve their public
