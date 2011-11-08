@@ -1,5 +1,8 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
+    - Added missing prerequisite LWP::Protocol::https which used to be part of
+      libwww-perl but has been extracted from it (gh-5)
+
 1.03 Sun Nov 07 22:32:00 GMT+2 2011
     - Fixed several tests
     - Added missing prerequisite URI::QueryParam (gh-4)
