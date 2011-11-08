@@ -2,6 +2,8 @@ Revision history for Perl module WebService::Rackspace::CloudFiles:
 
     - Added missing prerequisite LWP::Protocol::https which used to be part of
       libwww-perl but has been extracted from it (gh-5)
+    - purge_cdn method available for Container's and Object's since 1.03 but
+      this wasn't mentioned in CHANGES (gh-3, Khaled Hussein)
 
 1.03 Sun Nov 07 22:32:00 GMT+2 2011
     - Fixed several tests
