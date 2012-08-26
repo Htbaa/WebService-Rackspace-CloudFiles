@@ -21,6 +21,7 @@ has 'user'    => ( is => 'ro', isa => 'Str', required => 1 );
 has 'key'     => ( is => 'ro', isa => 'Str', required => 1 );
 has 'location'=> ( is => 'ro', isa => 'Str', required => 0, default => 'usa');
 has 'timeout' => ( is => 'ro', isa => 'Num', required => 0, default => 30 );
+has 'retries' => ( is => 'ro', isa => 'Str', required => 0, default => '1,2,4,8,16,32' );
 
 has 'ua'                 => ( is => 'rw', isa => 'LWP::UserAgent', required => 0 );
 has 'storage_url'        => ( is => 'rw', isa => 'Str',            required => 0 );
@@ -35,7 +36,7 @@ sub BUILD {
         keep_alive            => 10,
         requests_redirectable => [qw(GET HEAD DELETE PUT)],
     );
-    $ua->timing('1,2,4,8,16,32');
+    $ua->timing($self->retries);
     $ua->conn_cache(
         LWP::ConnCache::MaxKeepAliveRequests->new(
             total_capacity          => 10,
