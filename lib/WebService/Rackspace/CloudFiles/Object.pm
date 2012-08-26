@@ -244,7 +244,8 @@ sub put_filename {
     confess 'Missing Content-Length or Content-Type header'
         if $response->code == 412;
     confess 'Data corruption error' if $response->code == 422;
-    confess 'Data corruption error' if $response->header('ETag') ne $md5_hex;
+    confess 'Data corruption error' if !defined($response->header('ETag')) ||
+					($response->header('ETag') ne $md5_hex);
     confess 'Unknown error'         unless $response->is_success;
 }
 

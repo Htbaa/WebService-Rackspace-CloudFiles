@@ -1,5 +1,6 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
+    - Improved ETag checking (Adam Lelean)
     - Allow setting number of retries (Adam Lelean)
 
 1.04 Sun Nov 08 23:44:00 GMT+2 2011
