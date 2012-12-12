@@ -79,7 +79,9 @@ sub _authenticate {
             'X-Auth-Key'  => $self->key,
         ]
     );
+    $self->is_authenticated(1); # needed to prevent infinite recursion on auth requests
     my $response = $self->_request($request);
+    $self->is_authenticated(0);
 
     confess 'Unauthorized'  if $response->code == 401;
     confess 'Unknown error' if $response->code != 204;
