@@ -12,10 +12,6 @@ use JSON::Any;
 our $VERSION = '1.05';
 
 my $DEBUG = 0;
-my %locations = (
-    uk  => 'https://lon.auth.api.rackspacecloud.com/v1.0',
-    usa => 'https://auth.api.rackspacecloud.com/v1.0',
-);
 
 has 'user'    => ( is => 'ro', isa => 'Str', required => 1 );
 has 'key'     => ( is => 'ro', isa => 'Str', required => 1 );
@@ -23,15 +19,89 @@ has 'location'=> ( is => 'ro', isa => 'Str', required => 0, default => 'usa');
 has 'timeout' => ( is => 'ro', isa => 'Num', required => 0, default => 30 );
 has 'retries' => ( is => 'ro', isa => 'Str', required => 0, default => '1,2,4,8,16,32' );
 
-has 'ua'                 => ( is => 'rw', isa => 'LWP::UserAgent', required => 0 );
-has 'storage_url'        => ( is => 'rw', isa => 'Str',            required => 0 );
-has 'cdn_management_url' => ( is => 'rw', isa => 'Str',            required => 0 );
-has 'token'              => ( is => 'rw', isa => 'Str',            required => 0 );
+has locations => (
+    traits => [ 'Hash' ],
+    isa => 'HashRef',
+    is => 'ro',
+    default => sub {
+        return {
+            uk  => 'https://lon.auth.api.rackspacecloud.com/v1.0',
+            usa => 'https://auth.api.rackspacecloud.com/v1.0',
+        },
+    },
+    handles => {
+        location_names => 'keys',
+    },
+);
 
-__PACKAGE__->meta->make_immutable;
+has location_url => (
+    is       => 'ro',
+    isa      => 'Str',
+    lazy     => 1,
+    required => 0,
+    default  => sub {
+        my $self = shift;
 
-sub BUILD {
+        return $self->locations->{$self->location} or
+            confess "location $self->{location} unknown: valid locations are " .
+                join ', ', $self->location_names ;
+    },
+);
+
+has 'ua' => ( 
+    is          => 'ro', 
+    isa         => 'LWP::UserAgent', 
+    required    => 0, 
+    lazy        => 1,
+    builder     => '_build_ua',
+);
+
+has storage_url => ( 
+    is       => 'rw', 
+    isa      => 'Str', 
+    required => 0, 
+    lazy     => 1, 
+    default  => sub {  
+        my $self = shift;
+        $self->_authenticate;
+        $self->storage_url;
+    },
+);
+
+has cdn_management_url => ( 
+    is => 'rw', 
+    isa => 'Str', 
+    required => 0, 
+    lazy => 1,
+    default => sub {  
+        my $self = shift;
+        $self->_authenticate;
+        $self->cdn_management_url;
+    },
+);
+
+has token => ( 
+    is       => 'rw', 
+    isa      => 'Str', 
+    required => 0, 
+    lazy     => 1,
+    default  => sub {  
+        my $self = shift;
+        $self->_authenticate;
+        $self->token;
+    },
+);
+
+has is_authenticated => (
+    is       => 'rw',
+    isa      => 'Bool',
+    required => 0,
+    default  => 0,
+);
+
+sub _build_ua {
     my $self = shift;
+
     my $ua   = LWP::UserAgent::Determined->new(
         keep_alive            => 10,
         requests_redirectable => [qw(GET HEAD DELETE PUT)],
@@ -47,27 +117,23 @@ sub BUILD {
     $http_codes_hr->{422} = 1; # used by cloudfiles for upload data corruption
     $ua->timeout( $self->timeout );
     $ua->env_proxy;
-    $self->ua($ua);
 
-    $self->_authenticate;
+    return $ua;
 }
 
 sub _authenticate {
     my $self = shift;
 
-    if ( ! exists $locations{$self->{location}} ) {
-	confess "location $self->{location} unknown: valid locations are " .
-		join(', ', keys %locations);
-    }
-
     my $request = HTTP::Request->new(
         'GET',
-        $locations{$self->{location}},
+        $self->location_url,
         [   'X-Auth-User' => $self->user,
             'X-Auth-Key'  => $self->key,
         ]
     );
+    $self->is_authenticated(1); # needed to prevent infinite recursion on auth requests
     my $response = $self->_request($request);
+    $self->is_authenticated(0);
 
     confess 'Unauthorized'  if $response->code == 401;
     confess 'Unknown error' if $response->code != 204;
@@ -82,7 +148,15 @@ sub _authenticate {
     $self->storage_url($storage_url);
     $self->token($token);
     $self->cdn_management_url($cdn_management_url);
+
+    $self->is_authenticated(1);
 }
+
+before _request => sub {
+    my $self = shift;
+
+    $self->_authenticate unless $self->is_authenticated;
+};
 
 sub _request {
     my ( $self, $request, $filename ) = @_;
@@ -96,6 +170,7 @@ sub _request {
         # as an hour). The application should trap a 401 (Unauthorized)
         # response on a given request (to either storage or cdn system)
         # and then re-authenticate to obtain an updated token.
+        $self->is_authenticated(0);
         $self->_authenticate;
         $request->header( 'X-Auth-Token', $self->token );
         warn $request->as_string if $DEBUG;
@@ -163,6 +238,8 @@ sub create_container {
         name       => $name,
     );
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 
@@ -287,6 +364,16 @@ A location for the Cloud Files can now be specified. Valid locations are current
       key  => 'mysecretkey',
       location  => 'uk',
   );
+
+If you wish to use a custom location url instead, I<location_url> can be used
+to override the usual sites:
+
+  my $cloudfiles = WebService::Rackspace::CloudFiles->new(
+      user => 'myusername',
+      key  => 'mysecretkey',
+      location_url  => 'https://my.cloudfile.me/v1.0',
+  );
+
 
 =head2 containers
 

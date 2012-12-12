@@ -27,6 +27,7 @@ requires 'URI' => '1.59';
 test_requires 'Test::Exception' => '0';
 test_requires 'Test::More';
 test_requires 'File::Stat';
+test_requires 'Test::LWP::UserAgent';
 
 use_ptar;
 auto_install;
