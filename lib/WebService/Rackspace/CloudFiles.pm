@@ -31,9 +31,41 @@ has 'ua' => (
     builder     => '_build_ua',
 );
 
-has 'storage_url'        => ( is => 'rw', isa => 'Str',            required => 0 );
-has 'cdn_management_url' => ( is => 'rw', isa => 'Str',            required => 0 );
-has 'token'              => ( is => 'rw', isa => 'Str',            required => 0 );
+has storage_url => ( 
+    is       => 'rw', 
+    isa      => 'Str', 
+    required => 0, 
+    lazy     => 1, 
+    default  => sub {  
+        my $self = shift;
+        $self->_authenticate;
+        $self->storage_url;
+    },
+);
+
+has cdn_management_url => ( 
+    is => 'rw', 
+    isa => 'Str', 
+    required => 0, 
+    lazy => 1,
+    default => sub {  
+        my $self = shift;
+        $self->_authenticate;
+        $self->cdn_management_url;
+    },
+);
+
+has token => ( 
+    is       => 'rw', 
+    isa      => 'Str', 
+    required => 0, 
+    lazy     => 1,
+    default  => sub {  
+        my $self = shift;
+        $self->_authenticate;
+        $self->token;
+    },
+);
 
 has is_authenticated => (
     is       => 'rw',
