@@ -23,15 +23,28 @@ has 'location'=> ( is => 'ro', isa => 'Str', required => 0, default => 'usa');
 has 'timeout' => ( is => 'ro', isa => 'Num', required => 0, default => 30 );
 has 'retries' => ( is => 'ro', isa => 'Str', required => 0, default => '1,2,4,8,16,32' );
 
-has 'ua'                 => ( is => 'rw', isa => 'LWP::UserAgent', required => 0 );
+has 'ua' => ( 
+    is          => 'ro', 
+    isa         => 'LWP::UserAgent', 
+    required    => 0, 
+    lazy        => 1,
+    builder     => '_build_ua',
+);
+
 has 'storage_url'        => ( is => 'rw', isa => 'Str',            required => 0 );
 has 'cdn_management_url' => ( is => 'rw', isa => 'Str',            required => 0 );
 has 'token'              => ( is => 'rw', isa => 'Str',            required => 0 );
 
-__PACKAGE__->meta->make_immutable;
+has is_authenticated => (
+    is       => 'rw',
+    isa      => 'Bool',
+    required => 0,
+    default  => 0,
+);
 
-sub BUILD {
+sub _build_ua {
     my $self = shift;
+
     my $ua   = LWP::UserAgent::Determined->new(
         keep_alive            => 10,
         requests_redirectable => [qw(GET HEAD DELETE PUT)],
@@ -47,9 +60,8 @@ sub BUILD {
     $http_codes_hr->{422} = 1; # used by cloudfiles for upload data corruption
     $ua->timeout( $self->timeout );
     $ua->env_proxy;
-    $self->ua($ua);
 
-    $self->_authenticate;
+    return $ua;
 }
 
 sub _authenticate {
@@ -82,7 +94,15 @@ sub _authenticate {
     $self->storage_url($storage_url);
     $self->token($token);
     $self->cdn_management_url($cdn_management_url);
+
+    $self->is_authenticated(1);
 }
+
+before _request => sub {
+    my $self = shift;
+
+    $self->_authenticate unless $self->is_authenticated;
+};
 
 sub _request {
     my ( $self, $request, $filename ) = @_;
@@ -96,6 +116,7 @@ sub _request {
         # as an hour). The application should trap a 401 (Unauthorized)
         # response on a given request (to either storage or cdn system)
         # and then re-authenticate to obtain an updated token.
+        $self->is_authenticated(0);
         $self->_authenticate;
         $request->header( 'X-Auth-Token', $self->token );
         warn $request->as_string if $DEBUG;
@@ -163,6 +184,8 @@ sub create_container {
         name       => $name,
     );
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
 
