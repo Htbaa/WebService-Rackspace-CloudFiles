@@ -12,16 +12,41 @@ use JSON::Any;
 our $VERSION = '1.05';
 
 my $DEBUG = 0;
-my %locations = (
-    uk  => 'https://lon.auth.api.rackspacecloud.com/v1.0',
-    usa => 'https://auth.api.rackspacecloud.com/v1.0',
-);
 
 has 'user'    => ( is => 'ro', isa => 'Str', required => 1 );
 has 'key'     => ( is => 'ro', isa => 'Str', required => 1 );
 has 'location'=> ( is => 'ro', isa => 'Str', required => 0, default => 'usa');
 has 'timeout' => ( is => 'ro', isa => 'Num', required => 0, default => 30 );
 has 'retries' => ( is => 'ro', isa => 'Str', required => 0, default => '1,2,4,8,16,32' );
+
+has locations => (
+    traits => [ 'Hash' ],
+    isa => 'HashRef',
+    is => 'ro',
+    default => sub {
+        return {
+            uk  => 'https://lon.auth.api.rackspacecloud.com/v1.0',
+            usa => 'https://auth.api.rackspacecloud.com/v1.0',
+        },
+    },
+    handles => {
+        location_names => 'keys',
+    },
+);
+
+has location_url => (
+    is       => 'ro',
+    isa      => 'Str',
+    lazy     => 1,
+    required => 0,
+    default  => sub {
+        my $self = shift;
+
+        return $self->locations->{$self->location} or
+            confess "location $self->{location} unknown: valid locations are " .
+                join ', ', $self->location_names ;
+    },
+);
 
 has 'ua' => ( 
     is          => 'ro', 
@@ -99,14 +124,9 @@ sub _build_ua {
 sub _authenticate {
     my $self = shift;
 
-    if ( ! exists $locations{$self->{location}} ) {
-	confess "location $self->{location} unknown: valid locations are " .
-		join(', ', keys %locations);
-    }
-
     my $request = HTTP::Request->new(
         'GET',
-        $locations{$self->{location}},
+        $self->location_url,
         [   'X-Auth-User' => $self->user,
             'X-Auth-Key'  => $self->key,
         ]
@@ -344,6 +364,16 @@ A location for the Cloud Files can now be specified. Valid locations are current
       key  => 'mysecretkey',
       location  => 'uk',
   );
+
+If you wish to use a custom location url instead, I<location_url> can be used
+to override the usual sites:
+
+  my $cloudfiles = WebService::Rackspace::CloudFiles->new(
+      user => 'myusername',
+      key  => 'mysecretkey',
+      location_url  => 'https://my.cloudfile.me/v1.0',
+  );
+
 
 =head2 containers
 
