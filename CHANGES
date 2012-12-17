@@ -1,5 +1,7 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
+    - Custom location_url now supported (Yanick Champoux, gh-8)
+
 1.05 Sun Aug 26 14:16:00 GMT+2 2012
     - Improved ETag checking (Adam Lelean)
     - Allow setting number of retries (Adam Lelean)
