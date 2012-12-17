@@ -9,7 +9,7 @@ use LWP::ConnCache::MaxKeepAliveRequests;
 use LWP::UserAgent::Determined;
 use URI::QueryParam;
 use JSON::Any;
-our $VERSION = '1.05';
+our $VERSION = '1.06';
 
 my $DEBUG = 0;
 
