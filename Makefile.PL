@@ -14,7 +14,7 @@ requires 'Data::Stream::Bulk' => '0';
 requires 'DateTime::Format::HTTP' => '0.39';
 requires 'Digest::MD5' => '0';
 requires 'Digest::MD5::File' => '0';
-requires 'File::stat';
+requires 'File::stat' => '1.0';
 requires 'File::Slurp' => '0';
 requires 'JSON::Any' => '1.29';
 requires 'LWP' => '0';
