@@ -1,5 +1,7 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
+    - Now using File::stat instead of File::Stat (Olivier Mengué, gh-10)
+
 1.06 Mon Dec 17 21:06:00 GMT+2 2012
     - Custom location_url now supported (Yanick Champoux, gh-8)
 
