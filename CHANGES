@@ -1,5 +1,6 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
+    - Fixed test concerning cdn (gh-9)
     - Now using File::stat instead of File::Stat (Olivier Mengué, gh-10)
 
 1.06 Mon Dec 17 21:06:00 GMT+2 2012

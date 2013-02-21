@@ -91,20 +91,6 @@ is( $object->content_type, 'binary/octet-stream',
     'list has right content type' );
 isa_ok( $object->last_modified, 'DateTime', 'list has a last modified' );
 
-# Testing some CDN features
-$container->cdn_enable;
-ok($container->cdn_uri, 'CDN HTTP URL');
-ok($container->cdn_ssl_uri, 'CDN HTTPS URL');
-ok($one->cdn_url, 'CDN HTTP URL for object');
-ok($one->cdn_ssl_url, 'CDN HTTPS URL for object');
-
-my $ua = LWP::UserAgent->new;
-my $res = $ua->head($one->cdn_url);
-ok($res->is_success, 'Requesting CDN HTTP URL');
-
-#not purging in these tests because the $one->delete call will fail
-#ok($one->purge_cdn, 'Purging CDN Object');
-
 $one->delete;
 throws_ok(
     sub { $one->get },
@@ -176,8 +162,18 @@ isa_ok( $object->last_modified, 'DateTime', 'list has a last modified' );
 
 $another_two->delete;
 
-#not purging in these tests because the $container->delete call would fail
-#ok($container->purge_cdn, 'Purging CDN Container');
+$container->delete;
+
+# Testing some CDN features
+$container = $cloudfiles->create_container(name => 'testing');
+$container->cdn_enable;
+$object = $container->object(name => 'test.txt');
+$object->put('test');
+ok($container->cdn_uri,     'CDN HTTP URL');
+ok($container->cdn_ssl_uri, 'CDN HTTPS URL');
+ok($object->cdn_url,        'CDN HTTP URL for object');
+ok($object->cdn_ssl_url,    'CDN HTTPS URL for object');
+$object->delete;
 $container->delete;
 
 done_testing();
