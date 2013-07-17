@@ -1,5 +1,6 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
+1.08 Wed Jul 17 11:58:00 GMT+2 2013
     - Fixed enabling CDN on a container (gh-9)
     - Reverted: Fixed test concerning cdn. This actually didn't fix it at all
 
