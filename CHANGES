@@ -1,5 +1,8 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
+    - Add support for Rackspace Headers (Luke Closs)
+      https://www.rackspace.com/blog/thanks-for-your-feedback-cloud-files-supports-12-new-headers/
+      
 1.08 Wed Jul 17 11:58:00 GMT+2 2013
     - Fixed enabling CDN on a container (gh-9)
     - Reverted: Fixed test concerning cdn. This actually didn't fix it at all
