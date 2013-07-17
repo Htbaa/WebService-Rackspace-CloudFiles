@@ -259,7 +259,7 @@ prefix:
 
 =head2 object
 
-This returns a <WebService::Rackspace::CloudFiles::Object> representing
+This returns a L<WebService::Rackspace::CloudFiles::Object> representing
 an object.
 
   my $xxx = $container->object( name => 'XXX' );
