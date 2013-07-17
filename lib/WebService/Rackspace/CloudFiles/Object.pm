@@ -249,6 +249,22 @@ sub put_filename {
     confess 'Unknown error'         unless $response->is_success;
 }
 
+my %Supported_headers = (
+    map { $_ => 1 }
+    'Content-Encoding',
+    'Content-Disposition',
+    'X-Object-Manifest',
+    'Access-Control-Allow-Origin',
+    'Access-Control-Allow-Credentials',
+    'Access-Control-Expose-Headers',
+    'Access-Control-Max-Age',
+    'Access-Control-Allow-Methods',
+    'Access-Control-Allow-Headers',
+    'Origin',
+    'Access-Control-Request-Method',
+    'Access-Control-Request-Headers',
+);
+
 sub _prepare_headers {
     my ($self, $etag, $size) = @_;
     my $headers = HTTP::Headers->new();
@@ -260,7 +276,9 @@ sub _prepare_headers {
     
     my $header_field;
     foreach my $key (keys %{$self->object_metadata}) {
-        $header_field = 'X-Object-Meta-' . $key;
+        $header_field = $key;
+        $header_field = 'X-Object-Meta-' . $header_field
+            unless $Supported_headers{$header_field};
         # make _'s -'s for header sending.
         $header_field =~ s/_/-/g;
         

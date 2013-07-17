@@ -42,7 +42,11 @@ isa_ok( $one->container,  'WebService::Rackspace::CloudFiles::Container' );
 is( $one->container->name, 'testing', 'container name is testing' );
 is( $one->name,            'one.txt', 'object name is one.txt' );
 
-$one->object_metadata({ description => 'this is a description', useful_number => 17 });
+$one->object_metadata({
+        description => 'this is a description',
+        useful_number => 17,
+        'Access-Control-Allow-Origin' => '*',
+    });
 
 $one->put('this is one');
 
@@ -101,8 +105,9 @@ ok($one->cdn_ssl_url, 'CDN HTTPS URL for object');
 my $ua = LWP::UserAgent->new;
 my $res = $ua->head($one->cdn_url);
 ok($res->is_success, 'Requesting CDN HTTP URL');
+my $h = $res->header('Access-Control-Allow-Origin');
+is($h, '*', 'CORS header exists correctly');
 
-#not purging in these tests because the $one->delete call will fail
 #ok($one->purge_cdn, 'Purging CDN Object');
 
 $one->delete;
