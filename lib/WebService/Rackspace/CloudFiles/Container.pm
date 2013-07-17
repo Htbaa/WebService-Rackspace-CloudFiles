@@ -46,6 +46,7 @@ sub cdn_enable {
     $log_retention ||= 0;
     my $request = HTTP::Request->new('PUT', $self->_url('cdn'),
         [ 'X-Auth-Token'    => $self->cloudfiles->token,
+          'X-CDN-Enabled'   => 'True',
           'X-TTL'           => $ttl,
           'X-Log-Retention' => $log_retention ? 'True' : 'False' ] );
     my $response = $self->cloudfiles->_request($request);
