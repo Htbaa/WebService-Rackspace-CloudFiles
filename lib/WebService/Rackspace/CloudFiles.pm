@@ -42,7 +42,7 @@ has location_url => (
     default  => sub {
         my $self = shift;
 
-        return $self->locations->{$self->location} or
+        return $self->locations->{$self->location} ||
             confess "location $self->{location} unknown: valid locations are " .
                 join ', ', $self->location_names ;
     },

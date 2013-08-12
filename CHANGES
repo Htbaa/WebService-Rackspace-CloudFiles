@@ -1,5 +1,7 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
+    - Fixed wrong return precedence (Reini Urban)
+
 1.09 Wed Jul 17 17:20:00 GMT+2 2013
     - Add support for Rackspace Headers (Luke Closs)
       https://www.rackspace.com/blog/thanks-for-your-feedback-cloud-files-supports-12-new-headers/
