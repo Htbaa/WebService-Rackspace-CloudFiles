@@ -1,5 +1,6 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
+1.10 Mon Aug 12 16:10:00 GMT+2 2013
     - Fixed wrong return precedence (Reini Urban)
 
 1.09 Wed Jul 17 17:20:00 GMT+2 2013
