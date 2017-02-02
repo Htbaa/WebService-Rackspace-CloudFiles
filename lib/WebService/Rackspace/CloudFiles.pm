@@ -1,27 +1,29 @@
 package WebService::Rackspace::CloudFiles;
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
 use Data::Stream::Bulk::Callback;
 use DateTime::Format::HTTP;
 use WebService::Rackspace::CloudFiles::Container;
 use WebService::Rackspace::CloudFiles::Object;
+use WebService::Rackspace::CloudFiles::Moo::Types;
 use LWP::ConnCache::MaxKeepAliveRequests;
 use LWP::UserAgent::Determined;
 use URI::QueryParam;
 use JSON::Any;
+use Carp qw(confess);
 our $VERSION = '1.10';
 
 my $DEBUG = 0;
 
-has 'user'    => ( is => 'ro', isa => 'Str', required => 1 );
-has 'key'     => ( is => 'ro', isa => 'Str', required => 1 );
-has 'location'=> ( is => 'ro', isa => 'Str', required => 0, default => 'usa');
-has 'timeout' => ( is => 'ro', isa => 'Num', required => 0, default => 30 );
-has 'retries' => ( is => 'ro', isa => 'Str', required => 0, default => '1,2,4,8,16,32' );
+has 'user'    => ( is => 'ro', isa => moo_type('Str'), required => 1 );
+has 'key'     => ( is => 'ro', isa => moo_type('Str'), required => 1 );
+has 'location'=> ( is => 'ro', isa => moo_type('Str'), required => 0, default => 'usa');
+has 'timeout' => ( is => 'ro', isa => moo_type('Num'), required => 0, default => 30 );
+has 'retries' => ( is => 'ro', isa => moo_type('Str'), required => 0, default => '1,2,4,8,16,32' );
 
 has locations => (
     traits => [ 'Hash' ],
-    isa => 'HashRef',
+    isa => moo_type('HashRef'),
     is => 'ro',
     default => sub {
         return {
@@ -36,7 +38,7 @@ has locations => (
 
 has location_url => (
     is       => 'ro',
-    isa      => 'Str',
+    isa      => moo_type('Str'),
     lazy     => 1,
     required => 0,
     default  => sub {
@@ -50,7 +52,7 @@ has location_url => (
 
 has 'ua' => ( 
     is          => 'ro', 
-    isa         => 'LWP::UserAgent', 
+    isa         => moo_type(Class => 'LWP::UserAgent'),
     required    => 0, 
     lazy        => 1,
     builder     => '_build_ua',
@@ -58,7 +60,7 @@ has 'ua' => (
 
 has storage_url => ( 
     is       => 'rw', 
-    isa      => 'Str', 
+    isa      => moo_type('Str'),
     required => 0, 
     lazy     => 1, 
     default  => sub {  
@@ -70,7 +72,7 @@ has storage_url => (
 
 has cdn_management_url => ( 
     is => 'rw', 
-    isa => 'Str', 
+    isa => moo_type('Str'),
     required => 0, 
     lazy => 1,
     default => sub {  
@@ -82,7 +84,7 @@ has cdn_management_url => (
 
 has token => ( 
     is       => 'rw', 
-    isa      => 'Str', 
+    isa      => moo_type('Str'),
     required => 0, 
     lazy     => 1,
     default  => sub {  
@@ -94,7 +96,7 @@ has token => (
 
 has is_authenticated => (
     is       => 'rw',
-    isa      => 'Bool',
+    isa      => moo_type('Bool'),
     required => 0,
     default  => 0,
 );

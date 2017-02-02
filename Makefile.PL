@@ -21,8 +21,8 @@ requires 'LWP' => '0';
 requires 'LWP::ConnCache::MaxKeepAliveRequests' => '0';
 requires 'LWP::UserAgent::Determined' => '0';
 requires 'LWP::Protocol::https' => '';
-requires 'Moose' => '2.0007';
-requires 'MooseX::StrictConstructor' => '0.16';
+requires 'Moo' => '2.000000';
+requires 'MooX::StrictConstructor' => '';
 requires 'URI' => '1.59';
 
 test_requires 'Test::Exception' => '0';
