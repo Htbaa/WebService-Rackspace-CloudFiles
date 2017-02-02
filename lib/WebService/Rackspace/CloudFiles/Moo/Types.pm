@@ -48,7 +48,7 @@ our %types = (
   },
   UnblessedArrayRef => sub {
     my $val = shift;
-    die "$val should be an unblessed hashref" unless ref $val and ref $val eq 'ARRAY';
+    die "$val should be an unblessed arrayref" unless ref $val and ref $val eq 'ARRAY';
   },
   Class => sub {
     my $class = shift;
