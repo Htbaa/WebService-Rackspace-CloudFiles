@@ -1,21 +1,21 @@
 package WebService::Rackspace::CloudFiles::Container;
 use Moo;
 use MooX::StrictConstructor;
-use WebService::Rackspace::CloudFiles::Moo::Types;
+use Types::Standard qw(Bool Str Num Int HashRef InstanceOf);
 use JSON::Any;
 use Carp qw(confess);
  
 has 'cloudfiles' =>
-    ( is => 'ro', isa => moo_type(Class => 'WebService::Rackspace::CloudFiles'), required => 1 );
-has 'name' => (is => 'ro', isa => moo_type('Str'), required => 1);
-has 'cdn_enabled'   => (is => 'rw', isa => moo_type('Bool'));
-has 'ttl'           => (is => 'rw', isa => moo_type('Num'));
-has 'log_retention' => (is => 'rw', isa => moo_type('Str'));
-has 'cdn_uri'       => (is => 'rw', isa => moo_type('Str'));
-has 'cdn_ssl_uri'   => (is => 'rw', isa => moo_type('Str'));
-has 'cdn_streaming_uri'   => (is => 'rw', isa => moo_type('Str'));
-has 'bytes'         => (is => 'rw', isa => moo_type('Num'));
-has 'count'         => (is => 'rw', isa => moo_type('Num'));
+    ( is => 'ro', isa => InstanceOf['WebService::Rackspace::CloudFiles'], required => 1 );
+has 'name' => (is => 'ro', isa => Str, required => 1);
+has 'cdn_enabled'   => (is => 'rw', isa => Bool);
+has 'ttl'           => (is => 'rw', isa => Num);
+has 'log_retention' => (is => 'rw', isa => Str);
+has 'cdn_uri'       => (is => 'rw', isa => Str);
+has 'cdn_ssl_uri'   => (is => 'rw', isa => Str);
+has 'cdn_streaming_uri'   => (is => 'rw', isa => Str);
+has 'bytes'         => (is => 'rw', isa => Num);
+has 'count'         => (is => 'rw', isa => Num);
 
 __PACKAGE__->meta->make_immutable;
 

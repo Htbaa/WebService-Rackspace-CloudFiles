@@ -23,6 +23,7 @@ requires 'LWP::UserAgent::Determined' => '0';
 requires 'LWP::Protocol::https' => '';
 requires 'Moo' => '2.000000';
 requires 'MooX::StrictConstructor' => '';
+requires 'Types::Standard' => '';
 requires 'URI' => '1.59';
 
 test_requires 'Test::Exception' => '0';

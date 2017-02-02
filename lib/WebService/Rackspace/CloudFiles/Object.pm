@@ -1,26 +1,26 @@
 package WebService::Rackspace::CloudFiles::Object;
 use Moo;
 use MooX::StrictConstructor;
-use WebService::Rackspace::CloudFiles::Moo::Types;
-use WebService::Rackspace::CloudFiles::DateTime;
+use Types::Standard qw(Bool Str StrMatch Num Int HashRef InstanceOf);
 use Digest::MD5 qw(md5_hex);
 use Digest::MD5::File qw(file_md5_hex);
 use File::stat;
 use Carp qw(confess);
+use WebService::Rackspace::CloudFiles::DateTime;
 
 has 'cloudfiles' =>
-    ( is => 'ro', isa => moo_type(Class => 'WebService::Rackspace::CloudFiles'), required => 1 );
+    ( is => 'ro', isa => InstanceOf['WebService::Rackspace::CloudFiles'], required => 1 );
 has 'container' =>
-    ( is => 'ro', isa => moo_type(Class => 'WebService::Rackspace::CloudFiles::Container'), required => 1 );
-has 'name' => ( is => 'ro', isa => moo_type('Str'), required => 1 );
-has 'etag' => ( is => 'rw', isa => moo_type('Etag') );
-has 'size' => ( is => 'rw', isa => moo_type('Int') );
+    ( is => 'ro', isa => InstanceOf['WebService::Rackspace::CloudFiles::Container'], required => 1 );
+has 'name' => ( is => 'ro', isa => Str, required => 1 );
+has 'etag' => ( is => 'rw', isa => StrMatch[qr/^[a-z0-9]{32}$/] );
+has 'size' => ( is => 'rw', isa => Int );
 has 'content_type' =>
-    ( is => 'rw', isa => moo_type('Str'), default => 'binary/octet-stream' );
+    ( is => 'rw', isa => Str, default => 'binary/octet-stream' );
 
 has 'last_modified' => (
     is => 'rw',
-    isa => moo_type(Class => 'WebService::Rackspace::CloudFiles::DateTime'),
+    isa => InstanceOf['WebService::Rackspace::CloudFiles::DateTime'],
     coerce => sub { 
       my $val = shift; 
       $val = DateTime::Format::HTTP->parse_datetime($val) unless ref $val;
@@ -31,14 +31,14 @@ has 'last_modified' => (
 
 has 'cache_value' => (
     is        => 'rw',
-    isa       => moo_type('Bool'),
+    isa       => Bool,
     required  => 1,
     default   => 0
 );
 
 has 'always_check_etag' => (
     is        => 'rw',
-    isa       => moo_type('Bool'),
+    isa       => Bool,
     required  => 1,
     default   => 1
 );
@@ -46,7 +46,7 @@ has 'always_check_etag' => (
 
 has 'object_metadata' => (
     is        => 'rw',
-    isa       => moo_type('HashRef'),
+    isa       => HashRef,
     required  => 0,
     default   => sub  {
         return {};
@@ -61,7 +61,7 @@ has 'value' => (
 
 has 'local_filename' => (
     is        => 'rw',
-    isa       => moo_type('Str'),
+    isa       => Str,
     required  => 0
 );
 
