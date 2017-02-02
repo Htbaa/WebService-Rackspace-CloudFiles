@@ -1,12 +1,12 @@
 package WebService::Rackspace::CloudFiles;
 use Moo;
 use MooX::StrictConstructor;
-use Types::Standard qw(Bool Str Num Int HashRef InstanceOf);
-use Data::Stream::Bulk::Callback;
+use Types::Standard qw(Bool Str Num Int HashRef InstanceOf ClassName);
 use DateTime::Format::HTTP;
 use WebService::Rackspace::CloudFiles::Container;
 use WebService::Rackspace::CloudFiles::Object;
-use LWP::ConnCache::MaxKeepAliveRequests;
+use WebService::Rackspace::CloudFiles::Object::Iterator;
+use WebService::Rackspace::CloudFiles::ConnCache;
 use LWP::UserAgent::Determined;
 use URI::QueryParam;
 use JSON::Any;
@@ -20,6 +20,18 @@ has 'key'     => ( is => 'ro', isa => Str, required => 1 );
 has 'location'=> ( is => 'ro', isa => Str, required => 0, default => 'usa');
 has 'timeout' => ( is => 'ro', isa => Num, required => 0, default => 30 );
 has 'retries' => ( is => 'ro', isa => Str, required => 0, default => '1,2,4,8,16,32' );
+
+has 'connection_cache_class' => (
+    is => 'ro',
+    isa => ClassName,
+    default => 'WebService::Rackspace::CloudFiles::ConnCache'
+);
+
+has 'iterator_callback_class' => (
+    is => 'ro',
+    isa => ClassName,
+    default => 'WebService::Rackspace::CloudFiles::Object::Iterator'
+);
 
 has locations => (
     traits => [ 'Hash' ],
@@ -110,7 +122,7 @@ sub _build_ua {
     );
     $ua->timing($self->retries);
     $ua->conn_cache(
-        LWP::ConnCache::MaxKeepAliveRequests->new(
+        $self->connection_cache_class->new(
             total_capacity          => 10,
             max_keep_alive_requests => 990,
         )
@@ -375,7 +387,6 @@ to override the usual sites:
       key  => 'mysecretkey',
       location_url  => 'https://my.cloudfile.me/v1.0',
   );
-
 
 =head2 containers
 

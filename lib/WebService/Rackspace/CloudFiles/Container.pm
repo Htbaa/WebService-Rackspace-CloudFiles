@@ -2,6 +2,7 @@ package WebService::Rackspace::CloudFiles::Container;
 use Moo;
 use MooX::StrictConstructor;
 use Types::Standard qw(Bool Str Num Int HashRef InstanceOf);
+use WebService::Rackspace::CloudFiles::Object::Iterator;
 use JSON::Any;
 use Carp qw(confess);
  
@@ -123,7 +124,7 @@ sub objects {
     my $prefix   = $args{prefix};
     my $finished = 0;
 
-    return Data::Stream::Bulk::Callback->new(
+    return $self->cloudfiles->iterator_callback_class->new(
         callback => sub {
             return undef if $finished;
 
