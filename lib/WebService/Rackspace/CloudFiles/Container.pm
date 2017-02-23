@@ -252,8 +252,8 @@ Returns a list of objects in the container as
 L<WebService::Rackspace::CloudFiles::Object> objects. As the API only returns
 ten thousand objects per request, this module may have to do multiple
 requests to fetch all the objects in the container. This is exposed
-by using a L<Data::Stream::Bulk> object. You can also pass in a
-prefix:
+by using a L<Rackspace::CloudFiles::Object::Iterator> object. You can also pass
+in a prefix:
 
   foreach my $object ($container->objects->all) {
     ...

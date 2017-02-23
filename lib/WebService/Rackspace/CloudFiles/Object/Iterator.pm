@@ -17,15 +17,30 @@ sub next {
     return;
 }
 
+sub items {
+    my $self = shift;
+    if (my $a = $self->next) {
+        return @$a;
+    }
+    return ();
+}
+
 sub all {
-  my $self = shift;
+    my $self = shift;
+    my @all = ();
+    while (my $next = $self->next) {
+        push @all, @$next;
+    }
+    return @all;
+}
 
-  my @all = ();
-  while (my $next = $self->next) {
-    push @all, @$next;
-  }
-
-  return @all;
+sub cat      { $_[0]->upgrade_to_data_stream_bulk; shift->cat(@_);       }
+sub list_cat { $_[0]->upgrade_to_data_stream_bulk; shift->list_calt(@_); }
+sub filter   { $_[0]->upgrade_to_data_stream_bulk; shift->filter(@_);    }
+sub chunk    { $_[0]->upgrade_to_data_stream_bulk; shift->chunk(@_);     }
+sub upgrade_to_data_stream_bulk {
+  require Data::Stream::Bulk::Callback;
+  $_[0] = Data::Stream::Bulk::Callback->new(callback => $_[0]->callback);
 }
 
 1;
@@ -47,16 +62,25 @@ for CloudFiles file objects.
  
 =head1 DESCRIPTION
 
-Since Rackspace CloudFiles can only return 1,000 files at a time, an iterator
-was needed. WebService::RackSpace::CloudFiles used to use 
+Since Rackspace CloudFiles can only return 10,000 files at a time, an iterator
+is needed. WebService::RackSpace::CloudFiles used to use 
 Data::Bulk::Streamer but this relied upon Moose. It was replaced with this 
 module in order to allow use of Moo instead.
+
+This class supports the methods next, items, all, and is_done. For backward
+compatibility with previous versions of WebService::Rackspace::CloudFiles, if
+you call one of unsupported Data::Stream::Bulk's methods on an instance of this
+class, it will be converted to a Data::Stream::Bulk::Callback object. 
  
 =head1 METHODS
  
 =head2 next
 
-Retrieves the next item, if any.
+Retrieves the next block of items, if any, as an arrayref.
+
+=head2 items
+
+Retrieves the next block of items and dereferences the result.
  
 =head2 all
 
