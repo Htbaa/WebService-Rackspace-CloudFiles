@@ -11,7 +11,7 @@ use LWP::UserAgent::Determined;
 use URI::QueryParam;
 use JSON::Any;
 use Carp qw(confess);
-our $VERSION = '1.10';
+our $VERSION = '2.00';
 
 my $DEBUG = 0;
 

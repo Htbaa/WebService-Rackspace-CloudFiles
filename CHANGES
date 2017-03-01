@@ -1,5 +1,8 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
+2.00  2017-03-01
+    - Replaced Moose in favor of Moo (Dondi Michael Stroma)
+
 1.10 Mon Aug 12 16:10:00 GMT+2 2013
     - Fixed wrong return precedence (Reini Urban)
 
