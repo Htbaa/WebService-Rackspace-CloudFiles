@@ -1,27 +1,41 @@
 package WebService::Rackspace::CloudFiles;
-use Moose;
-use MooseX::StrictConstructor;
-use Data::Stream::Bulk::Callback;
+use Moo;
+use MooX::StrictConstructor;
+use Types::Standard qw(Bool Str Num Int HashRef InstanceOf ClassName);
 use DateTime::Format::HTTP;
 use WebService::Rackspace::CloudFiles::Container;
 use WebService::Rackspace::CloudFiles::Object;
-use LWP::ConnCache::MaxKeepAliveRequests;
+use WebService::Rackspace::CloudFiles::Object::Iterator;
+use WebService::Rackspace::CloudFiles::ConnCache;
 use LWP::UserAgent::Determined;
 use URI::QueryParam;
 use JSON::Any;
+use Carp qw(confess);
 our $VERSION = '1.10';
 
 my $DEBUG = 0;
 
-has 'user'    => ( is => 'ro', isa => 'Str', required => 1 );
-has 'key'     => ( is => 'ro', isa => 'Str', required => 1 );
-has 'location'=> ( is => 'ro', isa => 'Str', required => 0, default => 'usa');
-has 'timeout' => ( is => 'ro', isa => 'Num', required => 0, default => 30 );
-has 'retries' => ( is => 'ro', isa => 'Str', required => 0, default => '1,2,4,8,16,32' );
+has 'user'    => ( is => 'ro', isa => Str, required => 1 );
+has 'key'     => ( is => 'ro', isa => Str, required => 1 );
+has 'location'=> ( is => 'ro', isa => Str, required => 0, default => 'usa');
+has 'timeout' => ( is => 'ro', isa => Num, required => 0, default => 30 );
+has 'retries' => ( is => 'ro', isa => Str, required => 0, default => '1,2,4,8,16,32' );
+
+has 'connection_cache_class' => (
+    is => 'ro',
+    isa => ClassName,
+    default => 'WebService::Rackspace::CloudFiles::ConnCache'
+);
+
+has 'iterator_callback_class' => (
+    is => 'ro',
+    isa => ClassName,
+    default => 'WebService::Rackspace::CloudFiles::Object::Iterator'
+);
 
 has locations => (
     traits => [ 'Hash' ],
-    isa => 'HashRef',
+    isa => HashRef,
     is => 'ro',
     default => sub {
         return {
@@ -36,7 +50,7 @@ has locations => (
 
 has location_url => (
     is       => 'ro',
-    isa      => 'Str',
+    isa      => Str,
     lazy     => 1,
     required => 0,
     default  => sub {
@@ -50,7 +64,7 @@ has location_url => (
 
 has 'ua' => ( 
     is          => 'ro', 
-    isa         => 'LWP::UserAgent', 
+    isa         => InstanceOf['LWP::UserAgent'],
     required    => 0, 
     lazy        => 1,
     builder     => '_build_ua',
@@ -58,7 +72,7 @@ has 'ua' => (
 
 has storage_url => ( 
     is       => 'rw', 
-    isa      => 'Str', 
+    isa      => Str,
     required => 0, 
     lazy     => 1, 
     default  => sub {  
@@ -70,7 +84,7 @@ has storage_url => (
 
 has cdn_management_url => ( 
     is => 'rw', 
-    isa => 'Str', 
+    isa => Str,
     required => 0, 
     lazy => 1,
     default => sub {  
@@ -82,7 +96,7 @@ has cdn_management_url => (
 
 has token => ( 
     is       => 'rw', 
-    isa      => 'Str', 
+    isa      => Str,
     required => 0, 
     lazy     => 1,
     default  => sub {  
@@ -94,7 +108,7 @@ has token => (
 
 has is_authenticated => (
     is       => 'rw',
-    isa      => 'Bool',
+    isa      => Bool,
     required => 0,
     default  => 0,
 );
@@ -108,7 +122,7 @@ sub _build_ua {
     );
     $ua->timing($self->retries);
     $ua->conn_cache(
-        LWP::ConnCache::MaxKeepAliveRequests->new(
+        $self->connection_cache_class->new(
             total_capacity          => 10,
             max_keep_alive_requests => 990,
         )
@@ -373,7 +387,6 @@ to override the usual sites:
       key  => 'mysecretkey',
       location_url  => 'https://my.cloudfile.me/v1.0',
   );
-
 
 =head2 containers
 

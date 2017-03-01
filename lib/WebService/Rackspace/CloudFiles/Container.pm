@@ -1,19 +1,22 @@
 package WebService::Rackspace::CloudFiles::Container;
-use Moose;
-use MooseX::StrictConstructor;
+use Moo;
+use MooX::StrictConstructor;
+use Types::Standard qw(Bool Str Num Int HashRef InstanceOf);
+use WebService::Rackspace::CloudFiles::Object::Iterator;
 use JSON::Any;
-
+use Carp qw(confess);
+ 
 has 'cloudfiles' =>
-    ( is => 'ro', isa => 'WebService::Rackspace::CloudFiles', required => 1 );
-has 'name' => (is => 'ro', isa => 'Str', required => 1);
-has 'cdn_enabled'   => (is => 'rw', isa => 'Bool');
-has 'ttl'           => (is => 'rw', isa => 'Num');
-has 'log_retention' => (is => 'rw', isa => 'Str');
-has 'cdn_uri'       => (is => 'rw', isa => 'Str');
-has 'cdn_ssl_uri'   => (is => 'rw', isa => 'Str');
-has 'cdn_streaming_uri'   => (is => 'rw', isa => 'Str');
-has 'bytes'         => (is => 'rw', isa => 'Num');
-has 'count'         => (is => 'rw', isa => 'Num');
+    ( is => 'ro', isa => InstanceOf['WebService::Rackspace::CloudFiles'], required => 1 );
+has 'name' => (is => 'ro', isa => Str, required => 1);
+has 'cdn_enabled'   => (is => 'rw', isa => Bool);
+has 'ttl'           => (is => 'rw', isa => Num);
+has 'log_retention' => (is => 'rw', isa => Str);
+has 'cdn_uri'       => (is => 'rw', isa => Str);
+has 'cdn_ssl_uri'   => (is => 'rw', isa => Str);
+has 'cdn_streaming_uri'   => (is => 'rw', isa => Str);
+has 'bytes'         => (is => 'rw', isa => Num);
+has 'count'         => (is => 'rw', isa => Num);
 
 __PACKAGE__->meta->make_immutable;
 
@@ -121,7 +124,7 @@ sub objects {
     my $prefix   = $args{prefix};
     my $finished = 0;
 
-    return Data::Stream::Bulk::Callback->new(
+    return $self->cloudfiles->iterator_callback_class->new(
         callback => sub {
             return undef if $finished;
 
@@ -249,8 +252,8 @@ Returns a list of objects in the container as
 L<WebService::Rackspace::CloudFiles::Object> objects. As the API only returns
 ten thousand objects per request, this module may have to do multiple
 requests to fetch all the objects in the container. This is exposed
-by using a L<Data::Stream::Bulk> object. You can also pass in a
-prefix:
+by using a L<Rackspace::CloudFiles::Object::Iterator> object. You can also pass
+in a prefix:
 
   foreach my $object ($container->objects->all) {
     ...

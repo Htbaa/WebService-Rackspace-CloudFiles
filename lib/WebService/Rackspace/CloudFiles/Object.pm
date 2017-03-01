@@ -1,39 +1,44 @@
 package WebService::Rackspace::CloudFiles::Object;
-use Moose;
-use MooseX::StrictConstructor;
-use Moose::Util::TypeConstraints;
+use Moo;
+use MooX::StrictConstructor;
+use Types::Standard qw(Bool Str StrMatch Num Int HashRef InstanceOf);
 use Digest::MD5 qw(md5_hex);
 use Digest::MD5::File qw(file_md5_hex);
 use File::stat;
-
-subtype 'WebService::Rackspace::CloudFiles::DateTime' => as class_type('DateTime');
-coerce 'WebService::Rackspace::CloudFiles::DateTime'  => from 'Str' =>
-    via { DateTime::Format::HTTP->parse_datetime($_) };
-
-type 'WebService::Rackspace::CloudFiles::Etag' => where { $_ =~ /^[a-z0-9]{32}$/ };
+use Carp qw(confess);
+use WebService::Rackspace::CloudFiles::DateTime;
 
 has 'cloudfiles' =>
-    ( is => 'ro', isa => 'WebService::Rackspace::CloudFiles', required => 1 );
+    ( is => 'ro', isa => InstanceOf['WebService::Rackspace::CloudFiles'], required => 1 );
 has 'container' =>
-    ( is => 'ro', isa => 'WebService::Rackspace::CloudFiles::Container', required => 1 );
-has 'name' => ( is => 'ro', isa => 'Str', required => 1 );
-has 'etag' => ( is => 'rw', isa => 'WebService::Rackspace::CloudFiles::Etag' );
-has 'size' => ( is => 'rw', isa => 'Int' );
+    ( is => 'ro', isa => InstanceOf['WebService::Rackspace::CloudFiles::Container'], required => 1 );
+has 'name' => ( is => 'ro', isa => Str, required => 1 );
+has 'etag' => ( is => 'rw', isa => StrMatch[qr/^[a-z0-9]{32}$/] );
+has 'size' => ( is => 'rw', isa => Int );
 has 'content_type' =>
-    ( is => 'rw', isa => 'Str', default => 'binary/octet-stream' );
-has 'last_modified' =>
-    ( is => 'rw', isa => 'WebService::Rackspace::CloudFiles::DateTime', coerce => 1 );
+    ( is => 'rw', isa => Str, default => 'binary/octet-stream' );
+
+has 'last_modified' => (
+    is => 'rw',
+    isa => InstanceOf['WebService::Rackspace::CloudFiles::DateTime'],
+    coerce => sub { 
+      my $val = shift; 
+      $val = DateTime::Format::HTTP->parse_datetime($val) unless ref $val;
+      bless $val, 'WebService::Rackspace::CloudFiles::DateTime';
+      return $val;
+    }
+);
 
 has 'cache_value' => (
     is        => 'rw',
-    isa       => 'Bool',
+    isa       => Bool,
     required  => 1,
     default   => 0
 );
 
 has 'always_check_etag' => (
     is        => 'rw',
-    isa       => 'Bool',
+    isa       => Bool,
     required  => 1,
     default   => 1
 );
@@ -41,7 +46,7 @@ has 'always_check_etag' => (
 
 has 'object_metadata' => (
     is        => 'rw',
-    isa       => 'HashRef',
+    isa       => HashRef,
     required  => 0,
     default   => sub  {
         return {};
@@ -56,7 +61,7 @@ has 'value' => (
 
 has 'local_filename' => (
     is        => 'rw',
-    isa       => 'Str',
+    isa       => Str,
     required  => 0
 );
 
