@@ -544,6 +544,12 @@ Retrieve HTTP CDN url to object.
 
 Retrieve HTTPS CDN url to object.
 
+=head2 cloudfiles
+
+=head2 container
+
+=head2 value
+
 =head1 SEE ALSO
 
 L<WebService::Rackspace::CloudFiles>, L<WebService::Rackspace::CloudFiles::Container>.

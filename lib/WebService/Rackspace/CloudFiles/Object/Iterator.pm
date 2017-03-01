@@ -85,6 +85,18 @@ Retrieves the next block of items and dereferences the result.
 =head2 all
 
 Retrieves all items.
+
+=head2 callback
+
+=head2 cat
+
+=head2 chunk
+
+=head2 filter
+
+=head2 list_cat
+
+=head2 upgrade_to_data_stream_bulk
   
 =head2 is_done
 

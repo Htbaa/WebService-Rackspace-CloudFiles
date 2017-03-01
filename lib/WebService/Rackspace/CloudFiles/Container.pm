@@ -287,6 +287,8 @@ provide one or more emails to be notified after the container is fully purged.
   my @emails = ('foo@example.com', 'bar@example.com');
   $container->purge_cdn(@emails);
 
+=head2 cloudfiles
+
 =head1 SEE ALSO
 
 L<WebService::Rackspace::CloudFiles>, L<WebService::Rackspace::CloudFiles::Object>.

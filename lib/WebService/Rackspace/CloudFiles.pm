@@ -412,6 +412,22 @@ Returns the total amount of bytes used in your Cloud Files account:
 
   my $total_bytes_used = $cloudfiles->total_bytes_used;
 
+=head2 connection_cache_class
+
+=head2 iterator_callback_class
+
+=head2 key
+
+=head2 location
+
+=head2 locations
+
+=head2 retries
+
+=head2 timeout
+
+=head2 user
+
 =head1 TESTING
 
 Testing CloudFiles is a tricky thing. Rackspace charges you a bit of
