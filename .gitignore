@@ -11,3 +11,5 @@ MANIFEST*
 !MANIFEST.SKIP
 /t/one.txt
 /WebService-Rackspace-CloudFiles*
+MYMETA.json
+MYMETA.yml
