@@ -1,5 +1,7 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
+    - Include '.' in Makefile.PL for Perl 5.26 and higher
+
 2.01  2017-03-23
     - Messed up the 2.00 release with an outdated MANIFEST file
 
