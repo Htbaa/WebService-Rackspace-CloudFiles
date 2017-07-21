@@ -1,5 +1,6 @@
 Revision history for Perl module WebService::Rackspace::CloudFiles:
 
+2.02  2017-07-21
     - Fixed: purge_cdn in Object doesn't do an edge purge, it does a DELETE
       (jwrightecs, gh-23)
     - Include '.' in Makefile.PL for Perl 5.26 and higher
