@@ -24,3 +24,4 @@
 ^WebService-Rackspace-Cloudfiles-
 t/one.txt
 MYMETA.*
+.DS_Store
